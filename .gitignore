@@ -1,0 +1,12 @@
+.env
+.env.local
+frontend/.env.local
+.venv
+__pycache__/
+*.pyc
+backend/data/rag_store/.ingest_checkpoint.pkl
+backend/data/rag_store/corpus
+backend/.venv/
+frontend/node_modules/
+frontend/.next/
+*.log

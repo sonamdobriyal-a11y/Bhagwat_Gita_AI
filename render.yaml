@@ -1,0 +1,64 @@
+# Render Blueprint — deploy both services from the Render Dashboard:
+# New → Blueprint → connect this repo.
+#
+# After the API deploys, set CORS_ORIGINS on the API to your frontend URL.
+# After both deploy, set NEXT_PUBLIC_API_URL on the web service to https://<api-host>
+# and redeploy the frontend (Clear build cache).
+
+services:
+  - type: web
+    name: bhagavad-gita-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: bash scripts/render_build.sh
+    startCommand: bash scripts/render_start.sh
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: LLM_PROVIDER
+        value: gemini
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_CHAT_MODEL
+        value: gemini-2.0-flash
+      - key: GEMINI_EMBED_MODEL
+        value: gemini-embedding-001
+      - key: SKIP_INGEST
+        value: "1"
+      - key: RAG_STORE_DIR
+        value: ./data/rag_store
+      - key: PDF_PATH
+        value: ./data/bhagavad_gita.pdf
+      - key: CORS_ORIGINS
+        sync: false
+
+  - type: web
+    name: bhagavad-gita-web
+    runtime: node
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
+      - key: NEXT_PUBLIC_FIREBASE_API_KEY
+        sync: false
+      - key: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+        sync: false
+      - key: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+        sync: false
+      - key: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+        sync: false
+      - key: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+        sync: false
+      - key: NEXT_PUBLIC_FIREBASE_APP_ID
+        sync: false
+      - key: ADMIN_PANEL_SECRET
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false
