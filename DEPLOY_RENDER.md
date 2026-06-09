@@ -4,6 +4,13 @@ This project runs as **two Render Web Services**: a Python API (`backend/`) and 
 
 **Ollama does not work on Render** (no local model daemon). Use **Gemini** or **OpenAI** with an API key.
 
+### Quick preflight (run before you push)
+
+```bash
+bash scripts/render_preflight.sh      # verify everything is ready
+bash scripts/render_deploy_prep.sh    # preflight + stage deploy files + show git status
+```
+
 ---
 
 ## 1. Prepare the repository
