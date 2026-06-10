@@ -1,6 +1,8 @@
 .env
 .env.local
+frontend/.env
 frontend/.env.local
+backend/.env
 .venv
 __pycache__/
 *.pyc
