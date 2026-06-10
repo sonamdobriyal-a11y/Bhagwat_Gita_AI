@@ -143,10 +143,26 @@ def gemini_chat_stream(messages: list[dict]) -> Iterator[str]:
         config=types.GenerateContentConfig(
             system_instruction=system,
             temperature=0.6,
-            max_output_tokens=500,
+            max_output_tokens=600,
         ),
     )
     for chunk in stream:
-        text = getattr(chunk, "text", None)
+        # Extract text safely — chunk.text may raise if finish_reason is not STOP
+        try:
+            text = chunk.text
+        except Exception:
+            text = None
+
         if text:
             yield text
+            continue
+
+        # Check for non-STOP finish reasons and surface them
+        try:
+            candidates = getattr(chunk, "candidates", None) or []
+            for cand in candidates:
+                finish = getattr(cand, "finish_reason", None)
+                if finish and str(finish) not in ("FinishReason.STOP", "STOP", "1"):
+                    yield f"\n\n[Response stopped early: {finish}]"
+        except Exception:
+            pass
