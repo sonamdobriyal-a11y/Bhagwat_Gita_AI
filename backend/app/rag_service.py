@@ -166,8 +166,11 @@ def retrieve_context(query: str, k: int | None = None) -> tuple[str, list[dict]]
     try:
         q = _embed_query_vector(query)
     except Exception:
-        # Ollama / OpenAI unreachable — return empty rather than 500
-        return "", []
+        if settings.llm_provider == "ollama":
+            # Ollama unreachable — return empty rather than 500
+            return "", []
+        # For cloud providers re-raise so chat_stream can surface the real error
+        raise
 
     if len(emb[0]) != len(q):
         return "", []
@@ -202,7 +205,11 @@ def chat_stream(
     user_message: str,
     history: list[dict] | None = None,
 ) -> Iterator[str]:
-    context, _ = retrieve_context(user_message)
+    try:
+        context, _ = retrieve_context(user_message)
+    except Exception as e:
+        yield f"An error occurred while retrieving context: {e}"
+        return
     if not context.strip():
         if settings.llm_provider == "ollama":
             yield (
