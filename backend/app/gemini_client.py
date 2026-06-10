@@ -143,7 +143,7 @@ def gemini_chat_stream(messages: list[dict]) -> Iterator[str]:
         config=types.GenerateContentConfig(
             system_instruction=system,
             temperature=0.6,
-            max_output_tokens=180,
+            max_output_tokens=500,
         ),
     )
     for chunk in stream:
