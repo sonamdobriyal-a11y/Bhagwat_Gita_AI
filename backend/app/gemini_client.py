@@ -125,7 +125,12 @@ def gemini_embed_many(
 
 
 def gemini_chat_stream(messages: list[dict]) -> Iterator[str]:
-    """Accept a fully-assembled messages list (system + history + current user turn)."""
+    """Accept a fully-assembled messages list (system + history + current user turn).
+
+    Uses generate_content (non-streaming) to avoid partial-chunk issues with
+    Gemini's streaming API on proxy-buffered deployments (e.g. Render + Cloudflare).
+    The full response is yielded as one piece.
+    """
     system = next((m["content"] for m in messages if m["role"] == "system"), None)
     turns = [m for m in messages if m["role"] != "system"]
 
@@ -137,7 +142,7 @@ def gemini_chat_stream(messages: list[dict]) -> Iterator[str]:
         )
 
     client = _client()
-    stream = client.models.generate_content_stream(
+    response = client.models.generate_content(
         model=settings.gemini_chat_model,
         contents=contents,
         config=types.GenerateContentConfig(
@@ -146,23 +151,23 @@ def gemini_chat_stream(messages: list[dict]) -> Iterator[str]:
             max_output_tokens=600,
         ),
     )
-    for chunk in stream:
-        # Extract text safely — chunk.text may raise if finish_reason is not STOP
-        try:
-            text = chunk.text
-        except Exception:
-            text = None
 
-        if text:
-            yield text
-            continue
+    try:
+        text = response.text
+    except Exception:
+        text = None
 
-        # Check for non-STOP finish reasons and surface them
+    if text:
+        yield text
+    else:
+        # Surface finish reason if text is unavailable
         try:
-            candidates = getattr(chunk, "candidates", None) or []
+            candidates = getattr(response, "candidates", None) or []
             for cand in candidates:
                 finish = getattr(cand, "finish_reason", None)
-                if finish and str(finish) not in ("FinishReason.STOP", "STOP", "1"):
-                    yield f"\n\n[Response stopped early: {finish}]"
+                if finish:
+                    yield f"[Response blocked: {finish}]"
+                    return
         except Exception:
             pass
+        yield "[No response received from Gemini]"
