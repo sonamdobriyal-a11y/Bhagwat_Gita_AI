@@ -108,15 +108,15 @@ function KrishnaPanel() {
       />
       <div className="absolute inset-0 bg-gradient-to-r from-gita-field-warm/72 via-gita-field-warm/58 to-gita-field-warm/95" aria-hidden />
       <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-r from-transparent to-gita-ivory" aria-hidden />
-      <div className="relative z-10 flex h-full w-full flex-col items-center justify-end gap-5 px-5 pb-28 pt-8 lg:pb-36">
-        <div className="space-y-1 px-2 text-center font-sans">
-          <p className="text-[11px] font-semibold text-gita-peacock">
+      <div className="relative z-10 flex h-full w-full flex-col items-center justify-end gap-4 px-5 pb-28 pt-8 lg:pb-36">
+        <div className="space-y-2 px-2 text-center font-sans">
+          <p className="text-[13px] font-bold text-gita-peacock tracking-wide">
             <span className="font-devanagari">कृष्ण</span>
             <span className="uppercase tracking-[0.18em]"> · Kṛṣṇa</span>
           </p>
-          <p className="text-[11px] leading-snug text-gita-muted">Replies drawn from scripture in the corpus.</p>
+          <p className="text-[12px] font-semibold leading-snug text-gita-earth">Replies drawn from scripture in the corpus.</p>
         </div>
-        <p className="max-w-[15rem] text-center font-sans text-[11px] leading-relaxed text-gita-muted/90">
+        <p className="max-w-[15rem] text-center font-sans text-[12px] font-medium leading-relaxed text-gita-earth/80">
           One steadied voice beside the question.
         </p>
       </div>
@@ -139,15 +139,15 @@ function ArjunaPanel() {
       />
       <div className="absolute inset-0 bg-gradient-to-l from-gita-field-warm/72 via-gita-field-warm/58 to-gita-field-warm/95" aria-hidden />
       <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-l from-transparent to-gita-ivory" aria-hidden />
-      <div className="relative z-10 flex h-full w-full flex-col items-center justify-end gap-5 px-5 pb-28 pt-8 lg:pb-36">
-        <div className="space-y-1 px-2 text-center font-sans">
-          <p className="text-[11px] font-semibold text-gita-brass">
+      <div className="relative z-10 flex h-full w-full flex-col items-center justify-end gap-4 px-5 pb-28 pt-8 lg:pb-36">
+        <div className="space-y-2 px-2 text-center font-sans">
+          <p className="text-[13px] font-bold text-gita-brass tracking-wide">
             <span className="font-devanagari">अर्जुन</span>
             <span className="uppercase tracking-[0.18em]"> · Arjuna</span>
           </p>
-          <p className="text-[11px] leading-snug text-gita-muted">You speak for yourself, plainly.</p>
+          <p className="text-[12px] font-semibold leading-snug text-gita-earth">You speak for yourself, plainly.</p>
         </div>
-        <p className="max-w-[15rem] text-center font-sans text-[11px] leading-relaxed text-gita-muted/90">
+        <p className="max-w-[15rem] text-center font-sans text-[12px] font-medium leading-relaxed text-gita-earth/80">
           Bring the doubt, the duty, or the bind.
         </p>
       </div>
