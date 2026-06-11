@@ -13,10 +13,6 @@ const NAV_LINKS = [
   { href: "/stories", label: "Stories" },
 ];
 
-const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? "")
-  .split(",")
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean);
 
 function NavLink({
   href,
@@ -57,10 +53,7 @@ export function AppNav() {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
-  const isAdmin =
-    ADMIN_EMAILS.length > 0 &&
-    !!user?.email &&
-    ADMIN_EMAILS.includes(user.email.toLowerCase());
+  const isAdmin = !!user;
 
   return (
     <nav className="sticky top-0 z-50 border-b border-white/40 bg-gita-ivory/75 backdrop-blur-xl backdrop-saturate-150 shadow-[0_1px_0_rgba(143,94,58,0.05)]">
