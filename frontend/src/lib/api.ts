@@ -40,11 +40,12 @@ export async function streamChat(
   onToken: (t: string) => void,
   onError: (e: Error) => void,
   history?: ChatHistoryMessage[],
+  language?: "en" | "hi",
 ): Promise<void> {
   const res = await fetch(`${getApiBase()}/chat/stream`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, history: history ?? [] }),
+    body: JSON.stringify({ message, history: history ?? [], language: language ?? "en" }),
   });
 
   if (!res.ok || !res.body) {

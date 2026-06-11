@@ -35,6 +35,7 @@ class HistoryMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=8000)
     history: list[HistoryMessage] = Field(default_factory=list)
+    language: str = Field(default="en", pattern="^(en|hi)$")
 
 
 @app.get("/health")
@@ -67,10 +68,10 @@ def chat_sources(body: ChatRequest):
     return {"context_present": bool(context.strip()), "sources": sources}
 
 
-def _sse_stream(user_message: str, history: list[dict]):
+def _sse_stream(user_message: str, history: list[dict], language: str = "en"):
     def gen():
         try:
-            for piece in chat_stream(user_message, history=history):
+            for piece in chat_stream(user_message, history=history, language=language):
                 yield f"data: {json.dumps({'text': piece})}\n\n"
             yield "data: [DONE]\n\n"
         except RuntimeError as e:
@@ -85,7 +86,7 @@ def _sse_stream(user_message: str, history: list[dict]):
 def chat_stream_endpoint(body: ChatRequest):
     history = [{"role": m.role, "content": m.content} for m in body.history]
     return StreamingResponse(
-        _sse_stream(body.message, history),
+        _sse_stream(body.message, history, language=body.language),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",

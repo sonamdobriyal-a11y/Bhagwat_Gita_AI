@@ -7,7 +7,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { fetchSources, streamChat, type SourceRef, type ChatHistoryMessage } from "@/lib/api";
 import { KrishnaAvatar, ArjunaAvatar } from "@/components/CharacterAvatars";
 
-type Msg = { role: "user" | "assistant"; content: string };
+type Msg = { role: "user" | "assistant"; content: string; lang?: "en" | "hi" };
 
 const SUGGESTIONS = [
   "How does BG distinguish between karma and karma-phala—especially for modern vocation?",
@@ -109,7 +109,6 @@ function KrishnaPanel() {
       <div className="absolute inset-0 bg-gradient-to-r from-gita-field-warm/72 via-gita-field-warm/58 to-gita-field-warm/95" aria-hidden />
       <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-r from-transparent to-gita-ivory" aria-hidden />
       <div className="relative z-10 flex h-full w-full flex-col items-center justify-end gap-5 px-5 pb-28 pt-8 lg:pb-36">
-        <KrishnaAvatar size="lg" />
         <div className="space-y-1 px-2 text-center font-sans">
           <p className="text-[11px] font-semibold text-gita-peacock">
             <span className="font-devanagari">कृष्ण</span>
@@ -141,7 +140,6 @@ function ArjunaPanel() {
       <div className="absolute inset-0 bg-gradient-to-l from-gita-field-warm/72 via-gita-field-warm/58 to-gita-field-warm/95" aria-hidden />
       <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-l from-transparent to-gita-ivory" aria-hidden />
       <div className="relative z-10 flex h-full w-full flex-col items-center justify-end gap-5 px-5 pb-28 pt-8 lg:pb-36">
-        <ArjunaAvatar size="lg" />
         <div className="space-y-1 px-2 text-center font-sans">
           <p className="text-[11px] font-semibold text-gita-brass">
             <span className="font-devanagari">अर्जुन</span>
@@ -213,6 +211,7 @@ export function ChatExperience() {
   const [copied, setCopied] = useState<number | null>(null);
   const [listening, setListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
+  const [lang, setLang] = useState<"en" | "hi">("en");
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -281,7 +280,7 @@ export function ChatExperience() {
 
     setMessages((m) => [...m, { role: "user", content: trimmed }]);
     let acc = "";
-    setMessages((m) => [...m, { role: "assistant", content: "" }]);
+    setMessages((m) => [...m, { role: "assistant", content: "", lang }]);
 
     await streamChat(
       trimmed,
@@ -296,6 +295,7 @@ export function ChatExperience() {
       },
       (e) => setError(e.message),
       historySnapshot,
+      lang,
     );
 
     setBusy(false);
@@ -342,6 +342,25 @@ export function ChatExperience() {
             Threads tied to passages in our text · verify in your own book
           </div>
           <div className="flex flex-shrink-0 items-center gap-2">
+            {/* Language toggle */}
+            <button
+              type="button"
+              onClick={() => setLang((l) => (l === "en" ? "hi" : "en"))}
+              title={lang === "en" ? "Switch to Hindi responses" : "हिंदी से अंग्रेज़ी पर स्विच करें"}
+              className={`flex items-center gap-1 rounded-sm border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                lang === "hi"
+                  ? "border-gita-saffron bg-gita-saffron/10 text-gita-saffron"
+                  : "border-gita-line/70 bg-white text-gita-muted hover:border-gita-saffron/40 hover:text-gita-peacock"
+              }`}
+            >
+              <span className={lang === "hi" ? "font-devanagari" : ""}>
+                {lang === "hi" ? "हिं" : "EN"}
+              </span>
+              <span className="text-gita-line/70">·</span>
+              <span className={lang === "en" ? "font-devanagari" : ""}>
+                {lang === "en" ? "हिं" : "EN"}
+              </span>
+            </button>
             {authLoading ? (
               <span className="text-[10px] text-gita-muted">…</span>
             ) : user?.image ? (
@@ -430,7 +449,7 @@ export function ChatExperience() {
                       {isEmpty ? (
                         <TypingDots />
                       ) : (
-                        <div className="border-l-[3px] border-gita-brass-bright pl-3 font-sans text-[14px] leading-[1.75] text-gita-earth">
+                        <div className={`border-l-[3px] border-gita-brass-bright pl-3 text-[14px] leading-[1.85] text-gita-earth ${m.lang === "hi" ? "font-devanagari" : "font-sans"}`}>
                           {renderContent(m.content)}
                         </div>
                       )}
