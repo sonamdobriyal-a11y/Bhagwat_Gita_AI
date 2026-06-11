@@ -148,7 +148,11 @@ def gemini_chat_stream(messages: list[dict]) -> Iterator[str]:
         config=types.GenerateContentConfig(
             system_instruction=system,
             temperature=0.6,
-            max_output_tokens=600,
+            # gemini-2.5-flash is a "thinking" model. Without this, hidden
+            # reasoning tokens eat into max_output_tokens and the visible reply
+            # gets truncated mid-sentence. Disable thinking for short replies.
+            thinking_config=types.ThinkingConfig(thinking_budget=0),
+            max_output_tokens=800,
         ),
     )
 
