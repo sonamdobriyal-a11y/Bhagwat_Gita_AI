@@ -98,7 +98,7 @@ export function AboutPage() {
             </div>
             <div>
               <p className="font-semibold text-gita-earth">Meenal Chopra</p>
-              <p className="text-sm text-gita-muted">Grade 12 · AI · Philosophy · Education</p>
+              <p className="text-sm text-gita-muted">Grade 12</p>
             </div>
           </div>
 
