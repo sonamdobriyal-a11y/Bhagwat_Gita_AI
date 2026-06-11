@@ -11,7 +11,9 @@ from app.config import settings
 from app.gemini_client import gemini_chat_stream, gemini_embed_many, gemini_embed_one
 from app.ollama_client import ollama_chat_stream, ollama_embed_many, ollama_embed_one
 
-SYSTEM_PROMPT_EN = """You are Krishna on the chariot at Kurukshetra — warm, direct, speaking to Arjuna (the person chatting with you).
+SYSTEM_PROMPT_EN = """ABSOLUTE LANGUAGE RULE (highest priority): Write your ENTIRE reply in English only. This applies even if earlier replies in this conversation were in another language and even if the user's latest message is in Hindi or Hinglish. Switch fully to English now.
+
+You are Krishna on the chariot at Kurukshetra — warm, direct, speaking to Arjuna (the person chatting with you).
 
 VOICE — first person only:
 - Speak as "I" and "you". Never refer to yourself as Krishna, "he", or in the third person.
@@ -32,7 +34,9 @@ CONTEXT (Bhagavad Gita passages — cite from here only):
 ---
 """
 
-SYSTEM_PROMPT_HI = """आप कुरुक्षेत्र के रथ पर कृष्ण हैं — शांत, सीधे, अर्जुन (वह व्यक्ति जो आपसे बात कर रहा है) से बात कर रहे हैं।
+SYSTEM_PROMPT_HI = """पूर्ण भाषा नियम (सर्वोच्च प्राथमिकता): अपना पूरा उत्तर केवल हिंदी (देवनागरी) में लिखें। यह नियम तब भी लागू होता है जब इस बातचीत के पिछले उत्तर किसी अन्य भाषा में थे, और तब भी जब उपयोगकर्ता का संदेश अंग्रेज़ी या हिंग्लिश में हो। अभी पूरी तरह हिंदी में बदल जाएं।
+
+आप कुरुक्षेत्र के रथ पर कृष्ण हैं — शांत, सीधे, अर्जुन (वह व्यक्ति जो आपसे बात कर रहा है) से बात कर रहे हैं।
 
 आवाज़ — केवल पहले व्यक्ति में:
 - "मैं" और "तुम" में बोलें। खुद को कृष्ण, "वे" या तीसरे व्यक्ति में संदर्भित न करें।
@@ -255,11 +259,18 @@ def chat_stream(
     prompt_template = SYSTEM_PROMPT_HI if language == "hi" else SYSTEM_PROMPT_EN
     system_prompt = prompt_template.format(context=context)
 
+    # Per-turn language directive — reinforces the system rule so a mid-conversation
+    # toggle overrides the language signal from prior (history) turns.
+    if language == "hi":
+        lang_directive = "\n\n(निर्देश: इस उत्तर को पूरी तरह हिंदी में दें, चाहे पिछले उत्तर किसी भी भाषा में रहे हों।)"
+    else:
+        lang_directive = "\n\n(Instruction: Reply entirely in English, regardless of the language of earlier replies.)"
+
     # Build the full message list: prior turns + current user message
     prior_turns: list[dict] = history or []
     messages: list[dict] = [{"role": "system", "content": system_prompt}]
     messages.extend(prior_turns)
-    messages.append({"role": "user", "content": user_message})
+    messages.append({"role": "user", "content": user_message + lang_directive})
 
     if settings.llm_provider == "ollama":
         try:

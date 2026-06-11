@@ -513,6 +513,34 @@ export function ChatExperience() {
             </div>
           </div>
 
+          <div className="mb-2 flex items-center gap-2">
+            <span className="font-mono text-[8px] uppercase tracking-[0.18em] text-gita-muted">Krishna replies in</span>
+            <div className="inline-flex items-center rounded-full border border-gita-line/70 bg-white p-0.5">
+              <button
+                type="button"
+                onClick={() => setLang("en")}
+                className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold transition-colors ${
+                  lang === "en"
+                    ? "bg-gita-saffron text-gita-ivory shadow-sm"
+                    : "text-gita-muted hover:text-gita-peacock"
+                }`}
+              >
+                English
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang("hi")}
+                className={`rounded-full px-2.5 py-0.5 text-[12px] font-semibold transition-colors ${
+                  lang === "hi"
+                    ? "bg-gita-saffron text-gita-ivory shadow-sm font-devanagari"
+                    : "text-gita-muted hover:text-gita-peacock font-devanagari"
+                }`}
+              >
+                हिंदी
+              </button>
+            </div>
+          </div>
+
           <form onSubmit={onSubmit}>
             <div className="flex items-end gap-3 rounded-2xl border border-gita-line/50 bg-white/95 px-3 py-2.5 shadow-inner shadow-gita-peacock/5 ring-2 ring-transparent transition focus-within:border-gita-saffron/45 focus-within:ring-gita-peacock/15">
               <ArjunaAvatar />
