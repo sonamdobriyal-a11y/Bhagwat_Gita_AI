@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: "/chat", label: "Dialogue" },
   { href: "/journal", label: "Journal" },
   { href: "/stories", label: "Stories" },
+  { href: "/about", label: "About" },
 ];
 
 
