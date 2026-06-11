@@ -6,12 +6,17 @@ import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { SiteLogo } from "@/components/SiteLogo";
 
-const links = [
+const NAV_LINKS = [
   { href: "/#text", label: "Discover" },
   { href: "/chat", label: "Dialogue" },
   { href: "/journal", label: "Journal" },
   { href: "/stories", label: "Stories" },
 ];
+
+const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? "")
+  .split(",")
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
 
 function NavLink({
   href,
@@ -52,15 +57,36 @@ export function AppNav() {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
+  const isAdmin =
+    ADMIN_EMAILS.length > 0 &&
+    !!user?.email &&
+    ADMIN_EMAILS.includes(user.email.toLowerCase());
+
   return (
     <nav className="sticky top-0 z-50 border-b border-white/40 bg-gita-ivory/75 backdrop-blur-xl backdrop-saturate-150 shadow-[0_1px_0_rgba(143,94,58,0.05)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 sm:px-8">
         <SiteLogo onClick={() => setOpen(false)} />
 
         <div className="hidden items-center gap-1 md:flex">
-          {links.map((l) => (
+          {NAV_LINKS.map((l) => (
             <NavLink key={l.href} href={l.href} label={l.label} active={isActive(l.href)} />
           ))}
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className={`relative rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                isActive("/admin") ? "text-gita-earth" : "text-gita-muted hover:text-gita-peacock"
+              }`}
+            >
+              {isActive("/admin") && (
+                <span
+                  className="absolute inset-0 -z-10 rounded-full bg-white/80 shadow-sm shadow-gita-earth/5 ring-1 ring-gita-saffron/20"
+                  aria-hidden
+                />
+              )}
+              Admin
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -135,7 +161,7 @@ export function AppNav() {
       {open && (
         <div className="border-t border-gita-line/40 bg-gita-ivory/95 px-4 py-4 md:hidden">
           <div className="flex flex-col gap-1">
-            {links.map((l) => (
+            {NAV_LINKS.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
@@ -147,6 +173,17 @@ export function AppNav() {
                 {l.label}
               </Link>
             ))}
+            {isAdmin && (
+              <Link
+                href="/admin"
+                onClick={() => setOpen(false)}
+                className={`rounded-xl px-3 py-3 text-sm font-semibold ${
+                  isActive("/admin") ? "bg-gita-saffron/10 text-gita-peacock" : "text-gita-earth"
+                }`}
+              >
+                Admin
+              </Link>
+            )}
           </div>
         </div>
       )}

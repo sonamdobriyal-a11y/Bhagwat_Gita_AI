@@ -20,25 +20,12 @@ type AuthUserRow = {
   lastSignInAt: string | null;
 };
 
-type FeedbackRow = {
-  id: string;
-  username: string;
-  age: number;
-  gender: string;
-  email: string;
-  location: string;
-  feedback: string;
-  createdAt: string | null;
-};
-
 export default function AdminDashboard() {
   const [session, setSession] = useState<SessionInfo | null>(null);
   const [secretInput, setSecretInput] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loggingIn, setLoggingIn] = useState(false);
-  const [tab, setTab] = useState<"users" | "feedback">("users");
   const [users, setUsers] = useState<AuthUserRow[]>([]);
-  const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loadingData, setLoadingData] = useState(false);
 
@@ -57,11 +44,8 @@ export default function AdminDashboard() {
     setLoadError(null);
     setLoadingData(true);
     try {
-      const [uRes, fRes] = await Promise.all([
-        fetch("/api/admin/users", { credentials: "include" }),
-        fetch("/api/admin/feedback", { credentials: "include" }),
-      ]);
-      if (uRes.status === 401 || fRes.status === 401) {
+      const uRes = await fetch("/api/admin/users", { credentials: "include" });
+      if (uRes.status === 401) {
         setSession((s) => (s ? { ...s, authenticated: false } : s));
         setLoadError("Session expired or invalid. Sign in again.");
         return;
@@ -70,14 +54,8 @@ export default function AdminDashboard() {
         const j = (await uRes.json().catch(() => ({}))) as { error?: string };
         throw new Error(j.error ?? `Users request failed (${uRes.status})`);
       }
-      if (!fRes.ok) {
-        const j = (await fRes.json().catch(() => ({}))) as { error?: string };
-        throw new Error(j.error ?? `Feedback request failed (${fRes.status})`);
-      }
       const uJson = (await uRes.json()) as { users: AuthUserRow[] };
-      const fJson = (await fRes.json()) as { feedback: FeedbackRow[] };
       setUsers(uJson.users ?? []);
-      setFeedback(fJson.feedback ?? []);
     } catch (e) {
       setLoadError(e instanceof Error ? e.message : "Failed to load data.");
     } finally {
@@ -120,7 +98,6 @@ export default function AdminDashboard() {
   async function handleLogout() {
     await fetch("/api/admin/logout", { method: "POST", credentials: "include" });
     setUsers([]);
-    setFeedback([]);
     await refreshSession();
   }
 
@@ -194,27 +171,10 @@ export default function AdminDashboard() {
           </form>
         ) : (
           <div className="space-y-6">
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex rounded-full border border-gita-line bg-white p-1">
-                <button
-                  type="button"
-                  onClick={() => setTab("users")}
-                  className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-                    tab === "users" ? "bg-gita-peacock text-white" : "text-gita-muted hover:text-gita-earth"
-                  }`}
-                >
-                  Users ({users.length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTab("feedback")}
-                  className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-                    tab === "feedback" ? "bg-gita-peacock text-white" : "text-gita-muted hover:text-gita-earth"
-                  }`}
-                >
-                  Feedback ({feedback.length})
-                </button>
-              </div>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="font-display text-base font-semibold text-gita-peacock">
+                Registered users <span className="ml-1 font-sans text-sm font-normal text-gita-muted">({users.length})</span>
+              </h2>
               <button
                 type="button"
                 disabled={loadingData}
@@ -229,81 +189,44 @@ export default function AdminDashboard() {
               <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900">{loadError}</p>
             ) : null}
 
-            {tab === "users" ? (
-              <div className="overflow-x-auto rounded-2xl border border-gita-line bg-white shadow-sm">
-                <table className="min-w-full border-collapse text-left text-sm">
-                  <thead>
-                    <tr className="border-b border-gita-line bg-gita-field-warm/80 text-xs uppercase tracking-wide text-gita-muted">
-                      <th className="px-3 py-3">UID</th>
-                      <th className="px-3 py-3">Email</th>
-                      <th className="px-3 py-3">Name</th>
-                      <th className="px-3 py-3">Providers</th>
-                      <th className="px-3 py-3">Created</th>
-                      <th className="px-3 py-3">Last sign-in</th>
+            <div className="overflow-x-auto rounded-2xl border border-gita-line bg-white shadow-sm">
+              <table className="min-w-full border-collapse text-left text-sm">
+                <thead>
+                  <tr className="border-b border-gita-line bg-gita-field-warm/80 text-xs uppercase tracking-wide text-gita-muted">
+                    <th className="px-3 py-3">UID</th>
+                    <th className="px-3 py-3">Email</th>
+                    <th className="px-3 py-3">Name</th>
+                    <th className="px-3 py-3">Providers</th>
+                    <th className="px-3 py-3">Created</th>
+                    <th className="px-3 py-3">Last sign-in</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-3 py-8 text-center text-gita-muted">
+                        {loadingData ? "Loading…" : "No users yet."}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {users.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="px-3 py-8 text-center text-gita-muted">
-                          No users yet, or still loading.
+                  ) : (
+                    users.map((u) => (
+                      <tr key={u.uid} className="border-b border-gita-line/60 hover:bg-gita-field-warm/40">
+                        <td className="max-w-[9rem] truncate px-3 py-2 font-mono text-xs text-gita-peacock">{u.uid}</td>
+                        <td className="px-3 py-2">{u.email ?? "—"}</td>
+                        <td className="px-3 py-2">{u.displayName ?? "—"}</td>
+                        <td className="px-3 py-2 text-xs">{u.providers.join(", ") || "—"}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-xs text-gita-muted">
+                          {u.createdAt ? new Date(u.createdAt).toLocaleString() : "—"}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-2 text-xs text-gita-muted">
+                          {u.lastSignInAt ? new Date(u.lastSignInAt).toLocaleString() : "—"}
                         </td>
                       </tr>
-                    ) : (
-                      users.map((u) => (
-                        <tr key={u.uid} className="border-b border-gita-line/60 hover:bg-gita-field-warm/40">
-                          <td className="max-w-[9rem] truncate px-3 py-2 font-mono text-xs text-gita-peacock">{u.uid}</td>
-                          <td className="px-3 py-2">{u.email ?? "—"}</td>
-                          <td className="px-3 py-2">{u.displayName ?? "—"}</td>
-                          <td className="px-3 py-2 text-xs">{u.providers.join(", ") || "—"}</td>
-                          <td className="whitespace-nowrap px-3 py-2 text-xs text-gita-muted">
-                            {u.createdAt ? new Date(u.createdAt).toLocaleString() : "—"}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-2 text-xs text-gita-muted">
-                            {u.lastSignInAt ? new Date(u.lastSignInAt).toLocaleString() : "—"}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {feedback.length === 0 ? (
-                  <p className="text-sm text-gita-muted">No feedback documents yet.</p>
-                ) : (
-                  feedback.map((f) => (
-                    <article
-                      key={f.id}
-                      className="rounded-2xl border border-gita-line bg-white p-5 shadow-sm"
-                    >
-                      <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-gita-line/50 pb-3">
-                        <p className="font-mono text-xs text-gita-peacock">{f.id}</p>
-                        <p className="text-xs text-gita-muted">
-                          {f.createdAt ? new Date(f.createdAt).toLocaleString() : "No timestamp"}
-                        </p>
-                      </div>
-                      <div className="mt-3 grid gap-1 text-sm sm:grid-cols-2">
-                        <p>
-                          <span className="text-gita-muted">Name:</span> {f.username}
-                        </p>
-                        <p>
-                          <span className="text-gita-muted">Email:</span> {f.email}
-                        </p>
-                        <p>
-                          <span className="text-gita-muted">Age / gender:</span> {f.age} · {f.gender}
-                        </p>
-                        <p>
-                          <span className="text-gita-muted">Location:</span> {f.location}
-                        </p>
-                      </div>
-                      <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-gita-earth">{f.feedback}</p>
-                    </article>
-                  ))
-                )}
-              </div>
-            )}
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </main>
