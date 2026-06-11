@@ -269,6 +269,10 @@ export function ChatExperience() {
   const send = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || busy) return;
+    if (!user) {
+      setError("Please sign in first to start a conversation.");
+      return;
+    }
     setError(null);
     setSources(null);
     setShowSources(false);
@@ -392,7 +396,7 @@ export function ChatExperience() {
                 onClick={() =>
                   void (async () => {
                     const r = await signInWithGoogle();
-                    if (r.message) window.alert(r.message);
+                    if (r.message) setError("Sign-in failed. Please try again or contact admin.");
                   })()
                 }
                 className="btn-primary rounded-sm px-3 py-1.5 text-[11px] disabled:opacity-40"
@@ -496,8 +500,23 @@ export function ChatExperience() {
         </div>
 
         {error && (
-          <div className="border-t border-red-200/80 bg-gradient-to-r from-red-50 to-slate-50 px-6 py-3 text-[13px] font-medium text-red-900">
-            {error}
+          <div className="flex items-start justify-between gap-3 border-t border-red-200/70 bg-red-50/80 px-5 py-3">
+            <div className="flex items-start gap-2">
+              <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+              </svg>
+              <p className="text-[13px] font-medium text-red-800">{error}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setError(null)}
+              className="flex-shrink-0 text-red-400 hover:text-red-700 transition-colors"
+              aria-label="Dismiss"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         )}
 

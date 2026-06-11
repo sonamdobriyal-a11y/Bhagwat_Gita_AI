@@ -2,11 +2,29 @@ const raw = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 export function getApiBase(): string {
   if (!raw) {
-    throw new Error(
-      "NEXT_PUBLIC_API_URL is not set. Add it to your environment variables."
-    );
+    throw new Error("Service configuration missing. Please contact admin.");
   }
   return raw.replace(/\/$/, "");
+}
+
+/** Maps HTTP status codes and raw errors to user-friendly messages. */
+function friendlyError(status: number, raw?: string): string {
+  if (status === 401 || status === 403)
+    return "Please sign in to continue.";
+  if (status === 404)
+    return "Service not found. Please contact admin.";
+  if (status === 429)
+    return "Too many requests. Please wait a moment and try again.";
+  if (status === 503 || status === 502)
+    return "The server is temporarily unavailable. Please try again shortly.";
+  if (status >= 500)
+    return "Something went wrong on our end. Please try again or contact admin.";
+  // Check for raw backend "knowledge base" message and show a cleaner version
+  if (raw?.includes("knowledge base"))
+    return "The assistant could not find relevant passages. Please try rephrasing your question.";
+  if (raw?.includes("API key"))
+    return "Service configuration error. Please contact admin.";
+  return "Something went wrong. Please try again.";
 }
 
 export type SourceRef = {
@@ -24,8 +42,7 @@ export async function fetchSources(
     body: JSON.stringify({ message }),
   });
   if (!res.ok) {
-    const t = await res.text();
-    throw new Error(t || `Sources request failed (${res.status})`);
+    throw new Error(friendlyError(res.status));
   }
   return res.json();
 }
@@ -49,8 +66,8 @@ export async function streamChat(
   });
 
   if (!res.ok || !res.body) {
-    const t = await res.text();
-    onError(new Error(t || `Chat failed (${res.status})`));
+    const t = await res.text().catch(() => "");
+    onError(new Error(friendlyError(res.status, t)));
     return;
   }
 
@@ -72,7 +89,8 @@ export async function streamChat(
         try {
           const j = JSON.parse(payload) as { text?: string; error?: string };
           if (j.error) {
-            onError(new Error(j.error));
+            // Sanitise backend error before showing to user
+            onError(new Error(friendlyError(0, j.error)));
             return;
           }
           if (j.text) onToken(j.text);
@@ -81,7 +99,7 @@ export async function streamChat(
         }
       }
     }
-  } catch (e) {
-    onError(e instanceof Error ? e : new Error(String(e)));
+  } catch {
+    onError(new Error("Connection lost. Please try again."));
   }
 }
