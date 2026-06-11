@@ -106,7 +106,7 @@ export function AboutPage() {
             The idea for Bhagavad Gita AI emerged from a simple observation: many young people
             are searching for guidance, yet the resources available often feel either superficial
             or disconnected from their actual circumstances. At the same time, some of the
-            world's most enduring wisdom remains inaccessible — perceived as complex,
+            world&apos;s most enduring wisdom remains inaccessible — perceived as complex,
             intimidating, or outdated.
           </p>
           <p className="text-base leading-relaxed text-gita-earth/90">
@@ -118,7 +118,7 @@ export function AboutPage() {
 
           <blockquote className="rounded-xl border border-gita-line/60 bg-gita-field-deep/60 px-6 py-5">
             <p className="font-display text-lg italic leading-snug text-gita-peacock">
-              "What if technology could help make timeless wisdom more accessible?"
+              &ldquo;What if technology could help make timeless wisdom more accessible?&rdquo;
             </p>
           </blockquote>
 
