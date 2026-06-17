@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
-import { fetchSources, streamChat, type SourceRef, type ChatHistoryMessage } from "@/lib/api";
+import { streamChat, type ChatHistoryMessage } from "@/lib/api";
 import { KrishnaAvatar, ArjunaAvatar } from "@/components/CharacterAvatars";
 
 type Msg = { role: "user" | "assistant"; content: string; lang?: "en" | "hi" };
@@ -30,11 +30,6 @@ const SendIcon = () => (
 const CopyIcon = () => (
   <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-  </svg>
-);
-const BookIcon = () => (
-  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
   </svg>
 );
 const MicIcon = ({ active }: { active?: boolean }) => (
@@ -206,8 +201,6 @@ export function ChatExperience() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sources, setSources] = useState<SourceRef[] | null>(null);
-  const [showSources, setShowSources] = useState(false);
   const [copied, setCopied] = useState<number | null>(null);
   const [listening, setListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
@@ -215,6 +208,7 @@ export function ChatExperience() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const speechBaseRef = useRef("");
   const dailyVerse = DAILY_VERSES[Math.floor(Date.now() / 86400000) % DAILY_VERSES.length];
 
   useEffect(() => {
@@ -224,17 +218,16 @@ export function ChatExperience() {
     const recognition = new SR();
     recognition.continuous = false;
     recognition.interimResults = true;
-    recognition.lang = "en-IN";
+    recognition.lang = lang === "hi" ? "hi-IN" : "en-IN";
     recognition.onresult = (event) => {
-      let transcript = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        transcript += event.results[i][0]?.transcript ?? "";
+      let sessionTranscript = "";
+      for (let i = 0; i < event.results.length; i++) {
+        sessionTranscript += event.results[i][0]?.transcript ?? "";
       }
-      if (!transcript) return;
-      setInput((prev) => {
-        const spacer = prev && !prev.endsWith(" ") ? " " : "";
-        return `${prev}${spacer}${transcript}`.trimStart();
-      });
+      if (!sessionTranscript) return;
+      const base = speechBaseRef.current;
+      const spacer = base && !base.endsWith(" ") ? " " : "";
+      setInput(`${base}${spacer}${sessionTranscript}`.trimStart());
     };
     recognition.onend = () => setListening(false);
     recognition.onerror = () => setListening(false);
@@ -243,7 +236,7 @@ export function ChatExperience() {
       recognition.abort();
       recognitionRef.current = null;
     };
-  }, []);
+  }, [lang]);
 
   const toggleListening = useCallback(() => {
     const recognition = recognitionRef.current;
@@ -254,10 +247,25 @@ export function ChatExperience() {
       return;
     }
     setError(null);
+    speechBaseRef.current = textareaRef.current?.value ?? input;
     setListening(true);
     recognition.start();
     textareaRef.current?.focus();
-  }, [listening]);
+  }, [listening, input]);
+
+  const startNewChat = useCallback(() => {
+    if (busy) return;
+    if (listening) {
+      recognitionRef.current?.stop();
+      setListening(false);
+    }
+    setMessages([]);
+    setInput("");
+    setError(null);
+    setCopied(null);
+    speechBaseRef.current = "";
+    textareaRef.current?.focus();
+  }, [busy, listening]);
 
   const scrollToBottom = useCallback(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -274,8 +282,6 @@ export function ChatExperience() {
       return;
     }
     setError(null);
-    setSources(null);
-    setShowSources(false);
     setBusy(true);
 
     const historySnapshot: ChatHistoryMessage[] = messages
@@ -304,12 +310,6 @@ export function ChatExperience() {
 
     setBusy(false);
     textareaRef.current?.focus();
-    try {
-      const s = await fetchSources(trimmed);
-      if (s.sources?.length) setSources(s.sources);
-    } catch {
-      /* optional */
-    }
   };
 
   const onSubmit = (e: React.FormEvent) => {
@@ -346,6 +346,17 @@ export function ChatExperience() {
             Threads tied to passages in our text · verify in your own book
           </div>
           <div className="flex flex-shrink-0 items-center gap-2">
+            {messages.length > 0 && (
+              <button
+                type="button"
+                onClick={startNewChat}
+                disabled={busy}
+                title="Start a fresh conversation"
+                className="btn-secondary rounded-sm px-2.5 py-1 text-[11px] disabled:opacity-40"
+              >
+                New chat
+              </button>
+            )}
             {/* Language toggle */}
             <button
               type="button"
@@ -467,28 +478,7 @@ export function ChatExperience() {
                             <CopyIcon />
                             {copied === i ? "Copied" : "Copy"}
                           </button>
-                          {sources && sources.length > 0 && (
-                            <button
-                              type="button"
-                              onClick={() => setShowSources((v) => !v)}
-                              className="ml-auto flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-gita-peacock hover:underline"
-                            >
-                              <BookIcon />
-                              Sources ({sources.length})
-                            </button>
-                          )}
                         </div>
-                      )}
-                      {showSources && sources && (
-                        <ul className="mt-4 space-y-1 pt-4 font-mono text-[10px] text-gita-muted">
-                          {sources.map((s) => (
-                            <li key={s.id} className="flex flex-wrap gap-2">
-                              <span className="text-gita-peacock">{s.id.slice(0, 8)}…</span>
-                              {s.source && <span>{s.source}</span>}
-                              {s.page != null && s.page >= 0 && <span>p.{s.page}</span>}
-                            </li>
-                          ))}
-                        </ul>
                       )}
                     </div>
                   </div>
