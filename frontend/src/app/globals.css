@@ -365,3 +365,19 @@ textarea[style*="scrollbar-width: none"]::-webkit-scrollbar {
     0 6px 26px rgba(232, 165, 109, 0.1),
     0 12px 36px rgba(200, 137, 98, 0.08);
 }
+
+/* ─── Mobile carousel ─────────────────────────────────────────── */
+.carousel-track {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .carousel-track > [data-carousel-slide] {
+    scroll-snap-align: center;
+  }
+}

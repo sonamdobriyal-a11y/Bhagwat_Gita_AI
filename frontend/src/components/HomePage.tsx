@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { KrishnaAvatar, ArjunaAvatar } from "@/components/CharacterAvatars";
 import { AppNav } from "@/components/AppNav";
+import { MobileCarousel } from "@/components/MobileCarousel";
 
 const VERSES = [
   { ref: "2.47", chapter: "Karma Yoga", text: "You have a right to perform your prescribed duties, but you are not entitled to the fruits of your actions." },
@@ -107,7 +108,7 @@ export function HomePage() {
               aria-hidden
             />
             <p className="mb-5 text-[0.7rem] font-bold uppercase tracking-[0.14em] text-teal-700">Not another generic bot · rooted in the text</p>
-            <h1 className="font-display text-[2.35rem] font-semibold leading-[1.08] tracking-tight text-slate-900 sm:text-5xl lg:text-[3.25rem]">
+            <h1 className="font-display text-[1.85rem] font-semibold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-[3.25rem]">
               Turn the noise in your head into a{" "}
               <span className="bg-gradient-to-r from-teal-800 via-indigo-800 to-violet-800 bg-clip-text text-transparent">
                 calm, honest dialogue
@@ -216,7 +217,12 @@ export function HomePage() {
         </section>
 
         {/* Features */}
-        <section id="text" className="scroll-mt-28 py-20 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <section id="text" className="scroll-mt-28 py-20">
+          <MobileCarousel
+            ariaLabel="How the dialogue works"
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
+            slideClassName="w-[85vw] max-w-[300px] flex-shrink-0 snap-center"
+          >
           {[
             {
               title: "Grounded replies",
@@ -253,6 +259,7 @@ export function HomePage() {
             </article>
             );
           })}
+          </MobileCarousel>
         </section>
 
         {/* Verse block */}
@@ -273,19 +280,23 @@ export function HomePage() {
           <h2 className="mb-12 font-display text-[1.75rem] font-semibold tracking-tight text-slate-900">
             Turning scripture toward the moment
           </h2>
-          <ol className="grid gap-8 sm:grid-cols-3">
-            {[
+          <MobileCarousel
+            ariaLabel="How to use the dialogue"
+            className="grid gap-8 sm:grid-cols-3"
+            slideClassName="w-[85vw] max-w-[320px] flex-shrink-0 snap-center"
+          >
+          {[
               { step: "I", title: "Speak the bind aloud", detail: "Name dread, duty, resentment, tenderness—anything that pins you mid-field like Partha staring at elders.", c: "text-teal-700" },
               { step: "II", title: "The array tightens around text", detail: "Retrieval hunts the corpus for chunks that rhyme with what you revealed; unseen vyūhus become visible lines.", c: "text-indigo-700" },
               { step: "III", title: "Answer that walks with you", detail: "A spoken reply draws those lines together—with handles (verse refs or IDs) you can tug on later in quiet.", c: "text-violet-700" },
             ].map(({ step, title, detail, c }) => (
-              <li key={step} className="rounded-2xl border border-slate-200/80 bg-white p-5">
+              <li key={step} className="rounded-2xl border border-slate-200/80 bg-white p-5 list-none">
                 <span className={`font-mono text-xs font-semibold ${c}`}>{step}</span>
                 <h3 className="mt-2 font-display text-[1.0625rem] font-semibold tracking-tight">{title}</h3>
                 <p className="mt-2 text-[14px] leading-relaxed text-gita-muted">{detail}</p>
               </li>
             ))}
-          </ol>
+          </MobileCarousel>
         </section>
 
         {/* CTA */}
@@ -314,7 +325,7 @@ export function HomePage() {
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
           <p className="font-display text-sm font-semibold text-slate-800">Bhagavad Gītā AI</p>
           <p className="text-center text-[12px] text-slate-500">
-            Honour the witness in your lap: reconcile every citation with ink on paper before you preach. © {new Date().getFullYear()}
+            © {new Date().getFullYear()} Bhagavad Gītā AI
           </p>
           <div className="flex flex-wrap justify-center gap-6 text-[13px] text-slate-600">
             <Link href="/chat" className="transition hover:text-teal-700">Dialogue</Link>

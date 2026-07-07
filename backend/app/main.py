@@ -61,11 +61,11 @@ def health():
 def chat_sources(body: ChatRequest):
     """Return retrieved chunks for explainability (optional UI)."""
     try:
-        context, sources = retrieve_context(body.message)
+        context, sources, score = retrieve_context(body.message)
     except Exception:
         # Gracefully degrade — sources are optional; don't crash the UI
-        return {"context_present": False, "sources": []}
-    return {"context_present": bool(context.strip()), "sources": sources}
+        return {"context_present": False, "sources": [], "relevance_score": 0.0}
+    return {"context_present": bool(context.strip()), "sources": sources, "relevance_score": score}
 
 
 def _sse_stream(user_message: str, history: list[dict], language: str = "en"):

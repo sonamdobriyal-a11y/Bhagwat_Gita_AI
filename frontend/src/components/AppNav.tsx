@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { SiteLogo } from "@/components/SiteLogo";
 
@@ -48,13 +48,29 @@ export function AppNav() {
   const pathname = usePathname();
   const { user, loading, firebaseReady, signInWithGoogle, signOutUser } = useAuth();
   const [open, setOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch("/api/admin/session", { credentials: "include" });
+        if (!res.ok || cancelled) return;
+        const j = (await res.json()) as { authenticated?: boolean };
+        if (!cancelled) setIsAdmin(Boolean(j.authenticated));
+      } catch {
+        if (!cancelled) setIsAdmin(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname]);
 
   const isActive = (href: string) => {
     if (href.startsWith("/#")) return pathname === "/";
     return pathname === href || pathname.startsWith(`${href}/`);
   };
-
-  const isAdmin = !!user;
 
   return (
     <nav className="sticky top-0 z-50 border-b border-white/40 bg-gita-ivory/75 backdrop-blur-xl backdrop-saturate-150 shadow-[0_1px_0_rgba(143,94,58,0.05)]">

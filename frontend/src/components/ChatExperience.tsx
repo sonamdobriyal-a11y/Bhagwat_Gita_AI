@@ -205,6 +205,7 @@ export function ChatExperience() {
   const [listening, setListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [lang, setLang] = useState<"en" | "hi">("en");
+  const [menuOpen, setMenuOpen] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -331,38 +332,38 @@ export function ChatExperience() {
       <KrishnaPanel />
 
       <div className="relative z-[1] flex min-w-0 flex-1 flex-col border-x border-gita-line/90 bg-gita-ivory/95 shadow-[0_0_70px_rgba(15,23,42,0.08)] backdrop-blur">
-        <header className="flex flex-shrink-0 items-center justify-between gap-4 border-b border-gita-line/80 bg-white/92 px-4 py-3.5 backdrop-blur-xl sm:px-6">
-          <Link href="/" className="group min-w-0">
-            <p className="truncate font-display text-sm font-bold tracking-tight text-gita-peacock group-hover:text-gita-twilight md:text-[15px]">
+        <header className="relative z-50 flex flex-shrink-0 flex-col border-b border-gita-line/80 bg-white/92 backdrop-blur-xl">
+          <div className="flex items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6 sm:py-3.5">
+          <Link href="/" className="group min-w-0 flex-shrink">
+            <p className="truncate font-display text-xs font-bold tracking-tight text-gita-peacock group-hover:text-gita-twilight sm:text-sm md:text-[15px]">
               Bhagavad Gita
               <span className="font-sans font-semibold text-gita-muted"> · </span>
               <span className="text-gita-saffron">Dialogue</span>
             </p>
-            <p className="font-sans text-[10px] font-medium uppercase tracking-[0.2em] text-gita-muted">
+            <p className="hidden font-sans text-[10px] font-medium uppercase tracking-[0.2em] text-gita-muted sm:block">
               Plain speech · anchored replies
             </p>
           </Link>
-          <div className="hidden max-w-[14rem] text-center font-sans text-[10px] font-medium leading-snug text-gita-muted sm:block md:text-[11px]">
+          <div className="hidden max-w-[14rem] text-center font-sans text-[10px] font-medium leading-snug text-gita-muted md:block lg:text-[11px]">
             Threads tied to passages in our text · verify in your own book
           </div>
-          <div className="flex flex-shrink-0 items-center gap-2">
+          <div className="flex flex-shrink-0 items-center gap-1 sm:gap-2">
             {messages.length > 0 && (
               <button
                 type="button"
                 onClick={startNewChat}
                 disabled={busy}
                 title="Start a fresh conversation"
-                className="btn-secondary rounded-sm px-2.5 py-1 text-[11px] disabled:opacity-40"
+                className="btn-secondary hidden rounded-sm px-2.5 py-1 text-[11px] disabled:opacity-40 sm:inline-flex"
               >
                 New chat
               </button>
             )}
-            {/* Language toggle */}
             <button
               type="button"
               onClick={() => setLang((l) => (l === "en" ? "hi" : "en"))}
               title={lang === "en" ? "Switch to Hindi responses" : "हिंदी से अंग्रेज़ी पर स्विच करें"}
-              className={`flex items-center gap-1 rounded-sm border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+              className={`flex items-center gap-1 rounded-sm border px-2 py-1 text-[10px] font-semibold transition-colors sm:px-2.5 sm:text-[11px] ${
                 lang === "hi"
                   ? "border-gita-saffron bg-gita-saffron/10 text-gita-saffron"
                   : "border-gita-line/70 bg-white text-gita-muted hover:border-gita-saffron/40 hover:text-gita-peacock"
@@ -370,10 +371,6 @@ export function ChatExperience() {
             >
               <span className={lang === "hi" ? "font-devanagari" : ""}>
                 {lang === "hi" ? "हिं" : "EN"}
-              </span>
-              <span className="text-gita-line/70">·</span>
-              <span className={lang === "en" ? "font-devanagari" : ""}>
-                {lang === "en" ? "हिं" : "EN"}
               </span>
             </button>
             {authLoading ? (
@@ -395,7 +392,7 @@ export function ChatExperience() {
               <button
                 type="button"
                 onClick={() => void signOutUser()}
-                className="btn-secondary rounded-sm px-2.5 py-1 text-[11px]"
+                className="btn-secondary hidden rounded-sm px-2.5 py-1 text-[11px] sm:inline-flex"
               >
                 Sign out
               </button>
@@ -410,21 +407,71 @@ export function ChatExperience() {
                     if (r.message) setError("Sign-in failed. Please try again or contact admin.");
                   })()
                 }
-                className="btn-primary rounded-sm px-3 py-1.5 text-[11px] disabled:opacity-40"
+                className="btn-primary rounded-sm px-2.5 py-1 text-[10px] disabled:opacity-40 sm:px-3 sm:py-1.5 sm:text-[11px]"
               >
                 Sign in
               </button>
             ) : null}
-            <Link href="/chat" className="btn-secondary rounded-sm px-2.5 py-1 text-[11px]">
-              Dialogue
+            <button
+              type="button"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-gita-line/60 bg-white/50 text-gita-earth md:hidden"
+              aria-expanded={menuOpen}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMenuOpen((o) => !o)}
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                {menuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+            <Link href="/" className="btn-secondary hidden rounded-sm px-2.5 py-1 text-[11px] md:inline-flex">
+              Home
             </Link>
-            <Link href="/journal" className="btn-secondary rounded-sm px-2.5 py-1 text-[11px]">
+            <Link href="/journal" className="btn-secondary hidden rounded-sm px-2.5 py-1 text-[11px] lg:inline-flex">
               Journal
             </Link>
-            <Link href="/stories" className="btn-secondary rounded-sm px-2.5 py-1 text-[11px]">
+            <Link href="/stories" className="btn-secondary hidden rounded-sm px-2.5 py-1 text-[11px] lg:inline-flex">
               Stories
             </Link>
           </div>
+          </div>
+          {menuOpen && (
+            <div className="border-t border-gita-line/60 bg-white/95 px-4 py-3 shadow-lg md:hidden">
+              <div className="flex flex-col gap-1">
+                {messages.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => { startNewChat(); setMenuOpen(false); }}
+                    disabled={busy}
+                    className="rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-gita-earth"
+                  >
+                    New chat
+                  </button>
+                )}
+                <Link href="/" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-semibold text-gita-earth">
+                  Home
+                </Link>
+                <Link href="/journal" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-semibold text-gita-earth">
+                  Journal
+                </Link>
+                <Link href="/stories" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-semibold text-gita-earth">
+                  Stories
+                </Link>
+                {user ? (
+                  <button
+                    type="button"
+                    onClick={() => { void signOutUser(); setMenuOpen(false); }}
+                    className="rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-gita-earth"
+                  >
+                    Sign out
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          )}
         </header>
 
         <div className="chat-scroll relative flex-1 overflow-y-auto bg-gradient-to-b from-white via-gita-field-warm/85 to-white px-4 py-5 sm:px-8">

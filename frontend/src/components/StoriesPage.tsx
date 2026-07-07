@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { AppNav } from "@/components/AppNav";
+import { MobileCarousel } from "@/components/MobileCarousel";
 
 type StoryTheme = {
   /** Image overlay gradient */
@@ -347,7 +348,11 @@ export function StoriesPage() {
             <h2 className="font-display text-lg font-semibold text-gita-earth">Choose a character</h2>
             <p className="text-xs text-gita-muted">{STORIES.length} stories · public-domain art</p>
           </div>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <MobileCarousel
+            ariaLabel="Character portraits"
+            className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+            slideClassName="w-[85vw] max-w-[340px] flex-shrink-0 snap-center"
+          >
             {STORIES.map((story) => (
               <StoryGridCard
                 key={story.id}
@@ -361,7 +366,7 @@ export function StoriesPage() {
                 }}
               />
             ))}
-          </div>
+          </MobileCarousel>
         </section>
 
         <section aria-label="Story detail" className="scroll-mt-24">

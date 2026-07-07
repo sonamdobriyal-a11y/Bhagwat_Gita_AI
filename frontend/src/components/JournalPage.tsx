@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AppNav } from "@/components/AppNav";
+import { MobileCarousel } from "@/components/MobileCarousel";
 
 /* ─── Types ───────────────────────────────────────────────────── */
 interface Article {
@@ -577,7 +578,12 @@ export function JournalPage() {
         </div>
 
         {/* ══ 3-BENTO ROW ══ */}
-        <div className="mt-5 grid gap-5 sm:grid-cols-3">
+        <MobileCarousel
+          ariaLabel="Featured journal pieces"
+          className="mt-5 grid gap-5 sm:grid-cols-3"
+          slideClassName="w-[85vw] max-w-[320px] flex-shrink-0 snap-center"
+          mobileMaxWidth={640}
+        >
           <button type="button" onClick={() => openArticle(gridLeft)}
             className="card group cursor-pointer rounded-sm border-sky-100/80 bg-gradient-to-br from-white to-sky-50/40 p-5 text-left"
           >
@@ -615,7 +621,7 @@ export function JournalPage() {
             </div>
             <p className="mt-3 flex items-center gap-1 font-sans text-[11px] font-semibold text-rose-700 opacity-0 group-hover:opacity-100 transition-opacity">Open article <ArrowRight /></p>
           </button>
-        </div>
+        </MobileCarousel>
 
         {/* ══ WEEKLY SUMMARY ROW ══ */}
         <div className="mt-5 grid gap-5 sm:grid-cols-[1fr_300px]">
@@ -664,7 +670,11 @@ export function JournalPage() {
         <div className="mt-12">
           <span className="mb-3 inline-block text-[0.7rem] font-bold uppercase tracking-[0.14em] text-indigo-700">Topical index</span>
           <div className="mb-6 h-0.5 w-full max-w-xs bg-gradient-to-r from-teal-400 via-indigo-400 to-violet-400 opacity-50" />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <MobileCarousel
+            ariaLabel="Topical index"
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            slideClassName="w-[85vw] max-w-[300px] flex-shrink-0 snap-center"
+          >
             {[
               { topic: "Karma Yoga",         desc: "Act without attachment. The philosophy of selfless action and duty.", verse: "Ch. 3 & 4", accent: "teal" },
               { topic: "Jnana Yoga",         desc: "The path of knowledge. Discrimination between the real and the unreal.", verse: "Ch. 4 & 13", accent: "indigo" },
@@ -695,7 +705,7 @@ export function JournalPage() {
               </Link>
               );
             })}
-          </div>
+          </MobileCarousel>
         </div>
 
         {/* ══ EXTRA ARTICLES + FILTERS ══ */}
@@ -718,11 +728,15 @@ export function JournalPage() {
           </div>
 
           {showMore && (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <MobileCarousel
+              ariaLabel="More articles"
+              className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+              slideClassName="w-[85vw] max-w-[320px] flex-shrink-0 snap-center"
+            >
               {(filtered.length > 0 ? filtered : extraArticles).map((a) => (
                 <ArticleCard key={a.id} article={a} onOpen={openArticle} />
               ))}
-            </div>
+            </MobileCarousel>
           )}
         </div>
 

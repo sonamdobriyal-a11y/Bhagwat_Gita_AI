@@ -11,7 +11,44 @@ from app.config import settings
 from app.gemini_client import gemini_chat_stream, gemini_embed_many, gemini_embed_one
 from app.ollama_client import ollama_chat_stream, ollama_embed_many, ollama_embed_one
 
+OUT_OF_CONTEXT_EN = (
+    "I am here solely to discuss the Bhagavad Gita — its teachings on duty, dharma, karma, "
+    "meditation, devotion, and the inner struggles we face. Your question appears to fall outside "
+    "that scope. Please ask something related to the Gita or how its wisdom might apply to a "
+    "dilemma you carry."
+)
+
+OUT_OF_CONTEXT_HI = (
+    "मैं केवल भगवद् गीता पर चर्चा करने के लिए यहाँ हूँ — धर्म, कर्म, ध्यान, भक्ति और "
+    "आंतरिक संघर्षों पर उसकी शिक्षाएँ। आपका प्रश्न इस क्षेत्र से बाहर लगता है। "
+    "कृपया गीता से संबंधित या उसकी बुद्धि को अपनी स्थिति पर लागू करने वाला प्रश्न पूछें।"
+)
+
+_OFF_TOPIC_HINTS = (
+    "weather forecast", "stock price", "crypto", "bitcoin", "recipe for", "write code",
+    "python script", "javascript", "programming", "football score", "cricket score",
+    "movie review", "netflix", "who won the", "capital of", "population of",
+    "translate this sentence", "solve this math", "calculate ", "2+2", "homework help",
+    "write an essay about", "tell me a joke", "play a game", "latest news about",
+)
+
+
+def _normalize_query(q: str) -> str:
+    return " ".join(q.lower().split())
+
+
+def is_gita_related_query(query: str) -> bool:
+    """Heuristic pre-filter for obviously off-topic questions."""
+    q = _normalize_query(query)
+    if not q:
+        return False
+    return not any(hint in q for hint in _OFF_TOPIC_HINTS)
+
+
 SYSTEM_PROMPT_EN = """ABSOLUTE LANGUAGE RULE (highest priority): Write your ENTIRE reply in English only. This applies even if earlier replies in this conversation were in another language and even if the user's latest message is in Hindi or Hinglish. Switch fully to English now.
+
+SCOPE RULE (mandatory): You ONLY answer questions related to the Bhagavad Gita, its teachings, and how they apply to human dilemmas (duty, dharma, karma, meditation, devotion, ethics, inner struggle). If a question is unrelated to the Gita — such as general knowledge, entertainment, coding, sports, politics, or trivia — do NOT answer it. Instead reply with exactly this message and nothing else:
+"I am here solely to discuss the Bhagavad Gita — its teachings on duty, dharma, karma, meditation, devotion, and the inner struggles we face. Your question appears to fall outside that scope. Please ask something related to the Gita or how its wisdom might apply to a dilemma you carry."
 
 You are Krishna — warm, direct, speaking to the person chatting with you (a modern reader seeking guidance).
 
@@ -37,6 +74,9 @@ CONTEXT (Bhagavad Gita passages — cite from here only):
 """
 
 SYSTEM_PROMPT_HI = """पूर्ण भाषा नियम (सर्वोच्च प्राथमिकता): अपना पूरा उत्तर केवल हिंदी (देवनागरी) में लिखें। यह नियम तब भी लागू होता है जब इस बातचीत के पिछले उत्तर किसी अन्य भाषा में थे, और तब भी जब उपयोगकर्ता का संदेश अंग्रेज़ी या हिंग्लिश में हो। अभी पूरी तरह हिंदी में बदल जाएं।
+
+क्षेत्र नियम (अनिवार्य): आप केवल भगवद् गीता, उसकी शिक्षाओं और मानवीय संघर्षों पर उनके प्रयोग से संबंधित प्रश्नों का उत्तर दें (धर्म, कर्म, ध्यान, भक्ति, नैतिकता)। यदि प्रश्न गीता से असंबंधित है — जैसे सामान्य ज्ञान, मनोरंजन, कोडिंग, खेल, राजनीति — तो उत्तर न दें। इसके बजाय बिल्कुल यही संदेश दें और कुछ नहीं:
+"मैं केवल भगवद् गीता पर चर्चा करने के लिए यहाँ हूँ — धर्म, कर्म, ध्यान, भक्ति और आंतरिक संघर्षों पर उसकी शिक्षाएँ। आपका प्रश्न इस क्षेत्र से बाहर लगता है। कृपया गीता से संबंधित या उसकी बुद्धि को अपनी स्थिति पर लागू करने वाला प्रश्न पूछें।"
 
 आप कृष्ण हैं — शांत, सीधे, उस व्यक्ति से बात कर रहे हैं जो आपसे बात कर रहा है (एक आधुनिक पाठक जो मार्गदर्शन चाहता है)।
 
@@ -184,25 +224,25 @@ def save_index(embeddings: list[list[float]], chunks: list[dict]) -> None:
         pickle.dump(embeddings, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def retrieve_context(query: str, k: int | None = None) -> tuple[str, list[dict]]:
+def retrieve_context(query: str, k: int | None = None) -> tuple[str, list[dict], float]:
     k = k or settings.retrieve_k
     emb, chunks, emb_info = load_index()
     if not emb or not chunks:
-        return "", []
+        return "", [], 0.0
     if not _index_matches_current_settings(emb_info):
-        return "", []
+        return "", [], 0.0
 
     try:
         q = _embed_query_vector(query)
     except Exception:
         if settings.llm_provider == "ollama":
             # Ollama unreachable — return empty rather than 500
-            return "", []
+            return "", [], 0.0
         # For cloud providers re-raise so chat_stream can surface the real error
         raise
 
     if len(emb[0]) != len(q):
-        return "", []
+        return "", [], 0.0
 
     scored: list[tuple[float, int]] = []
     for i, row in enumerate(emb):
@@ -212,6 +252,7 @@ def retrieve_context(query: str, k: int | None = None) -> tuple[str, list[dict]]
         row_n = [x / nr for x in row]
         scored.append((_dot(q, row_n), i))
     scored.sort(key=lambda x: -x[0])
+    max_score = scored[0][0] if scored else 0.0
     top_idx = [idx for _, idx in scored[: min(k, len(scored))]]
 
     picked: list[str] = []
@@ -227,7 +268,7 @@ def retrieve_context(query: str, k: int | None = None) -> tuple[str, list[dict]]
             }
         )
     context = "\n\n---\n\n".join(picked)
-    return context, sources
+    return context, sources, max_score
 
 
 def chat_stream(
@@ -235,11 +276,22 @@ def chat_stream(
     history: list[dict] | None = None,
     language: str = "en",
 ) -> Iterator[str]:
+    out_of_context = OUT_OF_CONTEXT_HI if language == "hi" else OUT_OF_CONTEXT_EN
+
+    if not is_gita_related_query(user_message):
+        yield out_of_context
+        return
+
     try:
-        context, _ = retrieve_context(user_message)
+        context, _, max_score = retrieve_context(user_message)
     except Exception as e:
         yield f"An error occurred while retrieving context: {e}"
         return
+
+    if context.strip() and max_score < settings.retrieve_min_score:
+        yield out_of_context
+        return
+
     if not context.strip():
         if settings.llm_provider == "ollama":
             yield (

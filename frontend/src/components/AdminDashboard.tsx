@@ -3,12 +3,6 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
-type SessionInfo = {
-  authenticated: boolean;
-  adminSecretConfigured: boolean;
-  serviceAccountConfigured: boolean;
-};
-
 type AuthUserRow = {
   uid: string;
   email: string | null;
@@ -21,24 +15,9 @@ type AuthUserRow = {
 };
 
 export default function AdminDashboard() {
-  const [session, setSession] = useState<SessionInfo | null>(null);
-  const [secretInput, setSecretInput] = useState("");
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [loggingIn, setLoggingIn] = useState(false);
   const [users, setUsers] = useState<AuthUserRow[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loadingData, setLoadingData] = useState(false);
-
-  const refreshSession = useCallback(async () => {
-    const res = await fetch("/api/admin/session", { credentials: "include" });
-    if (!res.ok) return;
-    const j = (await res.json()) as SessionInfo;
-    setSession(j);
-  }, []);
-
-  useEffect(() => {
-    void refreshSession();
-  }, [refreshSession]);
 
   const loadTables = useCallback(async () => {
     setLoadError(null);
@@ -46,8 +25,7 @@ export default function AdminDashboard() {
     try {
       const uRes = await fetch("/api/admin/users", { credentials: "include" });
       if (uRes.status === 401) {
-        setSession((s) => (s ? { ...s, authenticated: false } : s));
-        setLoadError("Session expired or invalid. Sign in again.");
+        setLoadError("Session expired or invalid. Sign in again at /admin/signin.");
         return;
       }
       if (!uRes.ok) {
@@ -64,41 +42,13 @@ export default function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    if (session?.authenticated) {
-      void loadTables();
-    }
-  }, [session?.authenticated, loadTables]);
-
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    setLoginError(null);
-    setLoggingIn(true);
-    try {
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ secret: secretInput }),
-      });
-      const j = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
-      if (!res.ok) {
-        setLoginError(j.error ?? `Login failed (${res.status}).`);
-        return;
-      }
-      setSecretInput("");
-      await refreshSession();
-      await loadTables();
-    } catch {
-      setLoginError("Network error signing in.");
-    } finally {
-      setLoggingIn(false);
-    }
-  }
+    void loadTables();
+  }, [loadTables]);
 
   async function handleLogout() {
     await fetch("/api/admin/logout", { method: "POST", credentials: "include" });
     setUsers([]);
-    await refreshSession();
+    window.location.href = "/";
   }
 
   return (
@@ -118,59 +68,15 @@ export default function AdminDashboard() {
             <Link href="/" className="btn-secondary px-4 py-2 text-sm">
               Exit to site
             </Link>
-            {session?.authenticated ? (
-              <button type="button" onClick={() => void handleLogout()} className="btn-accent px-4 py-2 text-sm">
-                Sign out
-              </button>
-            ) : null}
+            <button type="button" onClick={() => void handleLogout()} className="btn-accent px-4 py-2 text-sm">
+              Sign out
+            </button>
           </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
-        {session === null ? (
-          <p className="text-sm text-gita-muted">Loading…</p>
-        ) : !session.adminSecretConfigured || !session.serviceAccountConfigured ? (
-          <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-            Configure server env vars: <strong>ADMIN_PANEL_SECRET</strong> and{" "}
-            <strong>FIREBASE_SERVICE_ACCOUNT_JSON</strong> (service account JSON, never public). Restart the dev server and
-            see <code className="text-xs">frontend/docs/FIREBASE_SETUP.md</code>.
-          </div>
-        ) : !session.authenticated ? (
-          <form
-            onSubmit={(e) => void handleLogin(e)}
-            className="glass-panel mx-auto max-w-md space-y-4 rounded-2xl p-8"
-          >
-            <h2 className="font-display text-lg font-semibold text-gita-peacock">Admin sign-in</h2>
-            <p className="text-sm text-gita-muted">
-              Enter the same value as <code className="text-xs">ADMIN_PANEL_SECRET</code> on the server. Session is stored
-              in an httpOnly cookie.
-            </p>
-            <label className="block text-sm font-medium text-gita-earth">
-              Admin secret
-              <input
-                type="password"
-                autoComplete="off"
-                value={secretInput}
-                onChange={(e) => setSecretInput(e.target.value)}
-                className="mt-1.5 w-full rounded-xl border border-gita-line bg-white px-3 py-2.5 text-sm outline-none ring-2 ring-transparent focus:border-gita-saffron/35 focus:ring-gita-peacock/10"
-              />
-            </label>
-            {loginError ? (
-              <p className="text-sm text-red-700" role="alert">
-                {loginError}
-              </p>
-            ) : null}
-            <button
-              type="submit"
-              disabled={loggingIn || !secretInput.trim()}
-              className="btn-primary w-full py-3 text-sm disabled:opacity-40"
-            >
-              {loggingIn ? "Checking…" : "Unlock dashboard"}
-            </button>
-          </form>
-        ) : (
-          <div className="space-y-6">
+        <div className="space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-display text-base font-semibold text-gita-peacock">
                 Registered users <span className="ml-1 font-sans text-sm font-normal text-gita-muted">({users.length})</span>
@@ -228,7 +134,6 @@ export default function AdminDashboard() {
               </table>
             </div>
           </div>
-        )}
       </main>
     </div>
   );

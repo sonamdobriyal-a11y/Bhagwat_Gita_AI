@@ -62,6 +62,7 @@ class Settings(BaseSettings):
     chunk_size: int = 900
     chunk_overlap: int = 120
     retrieve_k: int = 6
+    retrieve_min_score: float = 0.28
     cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
 
     firebase_enabled: bool = True
