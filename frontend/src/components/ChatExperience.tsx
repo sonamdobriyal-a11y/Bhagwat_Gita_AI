@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { streamChat, type ChatHistoryMessage } from "@/lib/api";
 import { KrishnaAvatar, ArjunaAvatar } from "@/components/CharacterAvatars";
 
@@ -184,7 +185,7 @@ function EmptyState({ onSend, busy }: { onSend: (s: string) => void; busy: boole
             type="button"
             disabled={busy}
             onClick={() => onSend(s)}
-            className="w-full rounded-2xl border border-gita-line/60 bg-white/90 px-4 py-3.5 text-left text-[13px] leading-relaxed text-gita-earth shadow-md shadow-gita-earth/5 transition hover:border-gita-saffron/40 hover:bg-gita-ivory hover:shadow-lg disabled:opacity-40"
+            className="w-full rounded-2xl border border-gita-line/60 bg-gita-chariot/90 px-4 py-3.5 text-left text-[13px] leading-relaxed text-gita-earth shadow-md shadow-gita-earth/5 transition hover:border-gita-saffron/40 hover:bg-gita-field-warm hover:shadow-lg disabled:opacity-40"
           >
             <span className="mr-2 font-display text-[10px] text-gita-brass">〉</span>
             {s}
@@ -331,8 +332,8 @@ export function ChatExperience() {
     <div className="relative isolate flex h-screen overflow-hidden bg-gita-field-warm font-sans text-gita-earth">
       <KrishnaPanel />
 
-      <div className="relative z-[1] flex min-w-0 flex-1 flex-col border-x border-gita-line/90 bg-gita-ivory/95 shadow-[0_0_70px_rgba(15,23,42,0.08)] backdrop-blur">
-        <header className="relative z-50 flex flex-shrink-0 flex-col border-b border-gita-line/80 bg-white/92 backdrop-blur-xl">
+      <div className="relative z-[1] flex min-w-0 flex-1 flex-col border-x border-gita-line/90 bg-gita-ivory/95 shadow-[0_0_70px_rgba(15,23,42,0.08)] backdrop-blur dark:shadow-[0_0_70px_rgba(0,0,0,0.35)]">
+        <header className="relative z-50 flex flex-shrink-0 flex-col border-b border-gita-line/80 bg-gita-ivory/92 backdrop-blur-xl">
           <div className="flex items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6 sm:py-3.5">
           <Link href="/" className="group min-w-0 flex-shrink">
             <p className="truncate font-display text-xs font-bold tracking-tight text-gita-peacock group-hover:text-gita-twilight sm:text-sm md:text-[15px]">
@@ -366,7 +367,7 @@ export function ChatExperience() {
               className={`flex items-center gap-1 rounded-sm border px-2 py-1 text-[10px] font-semibold transition-colors sm:px-2.5 sm:text-[11px] ${
                 lang === "hi"
                   ? "border-gita-saffron bg-gita-saffron/10 text-gita-saffron"
-                  : "border-gita-line/70 bg-white text-gita-muted hover:border-gita-saffron/40 hover:text-gita-peacock"
+                  : "border-gita-line/70 bg-gita-chariot text-gita-muted hover:border-gita-saffron/40 hover:text-gita-peacock"
               }`}
             >
               <span className={lang === "hi" ? "font-devanagari" : ""}>
@@ -412,9 +413,10 @@ export function ChatExperience() {
                 Sign in
               </button>
             ) : null}
+            <DarkModeToggle size="sm" />
             <button
               type="button"
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-gita-line/60 bg-white/50 text-gita-earth md:hidden"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-gita-line/60 bg-gita-chariot/80 text-gita-earth md:hidden"
               aria-expanded={menuOpen}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               onClick={() => setMenuOpen((o) => !o)}
@@ -439,7 +441,11 @@ export function ChatExperience() {
           </div>
           </div>
           {menuOpen && (
-            <div className="border-t border-gita-line/60 bg-white/95 px-4 py-3 shadow-lg md:hidden">
+            <div className="border-t border-gita-line/60 bg-gita-ivory/95 px-4 py-3 shadow-lg md:hidden">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-gita-muted">Appearance</span>
+                <DarkModeToggle size="sm" />
+              </div>
               <div className="flex flex-col gap-1">
                 {messages.length > 0 && (
                   <button
@@ -474,7 +480,7 @@ export function ChatExperience() {
           )}
         </header>
 
-        <div className="chat-scroll relative flex-1 overflow-y-auto bg-gradient-to-b from-white via-gita-field-warm/85 to-white px-4 py-5 sm:px-8">
+        <div className="chat-scroll relative flex-1 overflow-y-auto bg-gradient-to-b from-gita-ivory via-gita-field-warm/85 to-gita-ivory px-4 py-5 sm:px-8">
           {messages.length === 0 ? (
             <EmptyState onSend={(s) => void send(s)} busy={busy} />
           ) : (
@@ -507,7 +513,7 @@ export function ChatExperience() {
                         Kṛṣṇa · <span className="font-devanagari normal-case tracking-normal">कृष्ण</span>
                       </span>
                     </div>
-                    <div className="max-w-[92%] rounded-2xl border border-gita-line/90 bg-white px-4 py-3 shadow-sm ring-1 ring-gita-peacock/5 sm:max-w-[90%]">
+                    <div className="max-w-[92%] rounded-2xl border border-gita-line/90 bg-gita-chariot px-4 py-3 shadow-sm ring-1 ring-gita-peacock/5 sm:max-w-[90%]">
                       {isEmpty ? (
                         <TypingDots />
                       ) : (
@@ -557,8 +563,8 @@ export function ChatExperience() {
           </div>
         )}
 
-        <footer className="relative flex-shrink-0 border-t border-gita-line/80 bg-white/92 px-4 py-3 backdrop-blur-xl shadow-[0_-16px_40px_rgba(15,23,42,0.06)] sm:px-8">
-          <div className="mb-2 flex gap-3 rounded-2xl border border-gita-line/80 bg-gradient-to-r from-white to-gita-field-warm px-3 py-2.5 shadow-sm">
+        <footer className="relative flex-shrink-0 border-t border-gita-line/80 bg-gita-ivory/92 px-4 py-3 backdrop-blur-xl shadow-[0_-16px_40px_rgba(15,23,42,0.06)] dark:shadow-[0_-16px_40px_rgba(0,0,0,0.25)] sm:px-8">
+          <div className="mb-2 flex gap-3 rounded-2xl border border-gita-line/80 bg-gradient-to-r from-gita-ivory to-gita-field-warm px-3 py-2.5 shadow-sm">
             <KrishnaAvatar />
             <div className="min-w-0">
               <p className="font-display text-[8px] uppercase tracking-[0.2em] text-gita-brass">śloka for today</p>
@@ -571,7 +577,7 @@ export function ChatExperience() {
 
           <div className="mb-2 flex items-center gap-2">
             <span className="font-mono text-[8px] uppercase tracking-[0.18em] text-gita-muted">Krishna replies in</span>
-            <div className="inline-flex items-center rounded-full border border-gita-line/70 bg-white p-0.5">
+            <div className="inline-flex items-center rounded-full border border-gita-line/70 bg-gita-chariot p-0.5">
               <button
                 type="button"
                 onClick={() => setLang("en")}
@@ -598,7 +604,7 @@ export function ChatExperience() {
           </div>
 
           <form onSubmit={onSubmit}>
-            <div className="flex items-end gap-3 rounded-2xl border border-gita-line/50 bg-white/95 px-3 py-2.5 shadow-inner shadow-gita-peacock/5 ring-2 ring-transparent transition focus-within:border-gita-saffron/45 focus-within:ring-gita-peacock/15">
+            <div className="flex items-end gap-3 rounded-2xl border border-gita-line/50 bg-gita-chariot/95 px-3 py-2.5 shadow-inner shadow-gita-peacock/5 ring-2 ring-transparent transition focus-within:border-gita-saffron/45 focus-within:ring-gita-peacock/15">
               <ArjunaAvatar />
               <textarea
                 ref={textareaRef}
@@ -632,7 +638,7 @@ export function ChatExperience() {
                   className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border transition ${
                     listening
                       ? "border-gita-saffron bg-gita-saffron/15 text-gita-saffron ring-2 ring-gita-saffron/25"
-                      : "border-gita-line/70 bg-white text-gita-muted hover:border-gita-saffron/40 hover:text-gita-peacock"
+                      : "border-gita-line/70 bg-gita-chariot text-gita-muted hover:border-gita-saffron/40 hover:text-gita-peacock"
                   } disabled:cursor-not-allowed disabled:opacity-25`}
                 >
                   <MicIcon active={listening} />

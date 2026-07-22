@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -12,25 +13,25 @@ const config: Config = {
         /* ── Bhagavad Gītā · Kurukshetra field (conversational UI) ─ */
         /* Soft apricot — lighter, editorial orange */
         gita: {
-          peacock: "#b8734a",
-          "peacock-soft": "#c98962",
-          twilight: "#8f5e3a",
-          brass: "#78716c",
-          "brass-bright": "#a8a29e",
-          saffron: "#e8a56d",
-          "saffron-soft": "#f5cfa8",
-          field: "#fffcfa",
-          "field-warm": "#fffaf7",
-          "field-deep": "#fff4ed",
-          chariot: "#ffffff",
-          earth: "#3d3835",
-          muted: "#8a827a",
-          line: "#efe8e1",
-          ring: "#f5e0d0",
-          ember: "#f0b888",
-          ivory: "#ffffff",
-          lilac: "#fff4ed",
-          haze: "rgba(143,94,58,0.22)",
+          peacock: "var(--gita-peacock)",
+          "peacock-soft": "var(--gita-peacock-soft)",
+          twilight: "var(--gita-twilight)",
+          brass: "var(--gita-brass)",
+          "brass-bright": "var(--gita-brass-bright)",
+          saffron: "var(--gita-saffron)",
+          "saffron-soft": "var(--gita-saffron-soft)",
+          field: "var(--gita-field)",
+          "field-warm": "var(--gita-field-warm)",
+          "field-deep": "var(--gita-field-deep)",
+          chariot: "var(--gita-chariot)",
+          earth: "var(--gita-earth)",
+          muted: "var(--gita-muted)",
+          line: "var(--gita-line)",
+          ring: "var(--gita-ring)",
+          ember: "var(--gita-ember)",
+          ivory: "var(--gita-ivory)",
+          lilac: "var(--gita-lilac)",
+          haze: "var(--gita-haze)",
         },
 
         /* ── Surfaces ───────────────────────────────────── */

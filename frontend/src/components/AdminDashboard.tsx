@@ -52,8 +52,8 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gita-field-warm pb-16 font-sans text-gita-earth">
-      <header className="border-b border-gita-line/60 bg-white/80 px-6 py-4 backdrop-blur-md">
+    <div className="min-h-screen bg-gita-field-warm pb-16 font-sans text-gita-earth dark:bg-gita-field">
+      <header className="border-b border-gita-line/60 bg-white/80 px-6 py-4 backdrop-blur-md dark:bg-gita-ivory/90">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="label mb-1">Internal</p>
@@ -95,7 +95,7 @@ export default function AdminDashboard() {
               <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900">{loadError}</p>
             ) : null}
 
-            <div className="overflow-x-auto rounded-2xl border border-gita-line bg-white shadow-sm">
+            <div className="overflow-x-auto rounded-2xl border border-gita-line bg-white shadow-sm dark:bg-gita-chariot">
               <table className="min-w-full border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-gita-line bg-gita-field-warm/80 text-xs uppercase tracking-wide text-gita-muted">

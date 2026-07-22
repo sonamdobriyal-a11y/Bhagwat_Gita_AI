@@ -215,7 +215,7 @@ function StoryGridCard({
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
-      className={`group flex h-full flex-col overflow-hidden rounded-[1.35rem] border bg-white text-left shadow-sm transition-all duration-300 ${
+      className={`group flex h-full flex-col overflow-hidden rounded-[1.35rem] border bg-white dark:bg-ink-800 text-left shadow-sm transition-all duration-300 ${
         selected ? `shadow-md ${t.ring} ring-2` : `border-gita-line/70 ${t.hoverBorder} hover:-translate-y-1 hover:shadow-lg`
       }`}
     >
@@ -257,7 +257,7 @@ function StoryDetailPanel({ story }: { story: Story }) {
   return (
     <article
       id={`story-${story.id}`}
-      className="overflow-hidden rounded-[1.75rem] border border-gita-line/70 bg-white shadow-lg shadow-black/5"
+      className="overflow-hidden rounded-[1.75rem] border border-gita-line/70 bg-white dark:bg-ink-800 shadow-lg shadow-black/5 dark:shadow-black/20"
     >
       <div className="grid lg:grid-cols-[minmax(260px,340px)_1fr]">
         <div className={`relative min-h-[260px] bg-gradient-to-br ${t.backdrop} lg:min-h-full`}>
@@ -319,7 +319,7 @@ export function StoriesPage() {
   const selected = STORIES.find((s) => s.id === selectedId) ?? STORIES[0];
 
   return (
-    <div className="relative min-h-screen bg-[#fafafa] font-sans text-gita-earth">
+    <div className="relative min-h-screen bg-[#fafafa] font-sans text-gita-earth theme-page-muted dark:bg-ink-900 dark:text-gita-earth">
       <AppNav />
 
       <div className="pointer-events-none absolute left-[4%] top-28 h-72 w-72 rounded-full bg-emerald-200/30 blur-3xl" aria-hidden />

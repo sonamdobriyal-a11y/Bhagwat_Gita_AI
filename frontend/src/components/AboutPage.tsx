@@ -13,7 +13,7 @@ export function AboutPage() {
       <AppNav />
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden border-b border-gita-line/60 bg-gradient-to-b from-white to-gita-field-warm px-5 py-20 text-center sm:py-28">
+      <section className="relative overflow-hidden border-b border-gita-line/60 bg-gradient-to-b from-gita-ivory to-gita-field-warm px-5 py-20 text-center sm:py-28">
         {/* Decorative blurs */}
         <div className="pointer-events-none absolute -top-24 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-gita-saffron/10 blur-3xl" aria-hidden />
         <div className="pointer-events-none absolute bottom-0 right-0 h-60 w-60 rounded-full bg-gita-peacock/8 blur-3xl" aria-hidden />
@@ -92,7 +92,7 @@ export function AboutPage() {
         <section className="space-y-5">
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-gita-saffron">About the Creator</p>
 
-          <div className="flex items-start gap-4 rounded-2xl border border-gita-line/80 bg-white/70 px-6 py-5 shadow-sm">
+          <div className="flex items-start gap-4 rounded-2xl border border-gita-line/80 bg-gita-chariot/70 px-6 py-5 shadow-sm">
             <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-gita-saffron-soft to-gita-saffron text-lg font-bold text-white shadow">
               M
             </div>
@@ -146,7 +146,7 @@ export function AboutPage() {
         </section>
 
         {/* CTA */}
-        <section className="rounded-2xl border border-gita-line/60 bg-gradient-to-br from-white to-gita-field-deep px-8 py-10 text-center shadow-sm">
+        <section className="rounded-2xl border border-gita-line/60 bg-gradient-to-br from-gita-ivory to-gita-field-deep px-8 py-10 text-center shadow-sm">
           <p className="font-display text-[10px] uppercase tracking-[0.25em] text-gita-saffron">Begin the Dialogue</p>
           <h2 className="mt-3 font-display text-2xl font-semibold leading-snug text-gita-earth">
             Bring your question. The Gita will meet it.

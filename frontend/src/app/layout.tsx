@@ -3,6 +3,8 @@ import { Inter, Lora, Noto_Sans_Devanagari } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import { ClientShell } from "@/components/ClientShell";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeScript } from "@/components/ThemeScript";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -49,10 +51,15 @@ export default function RootLayout({
       className={`${inter.variable} ${lora.variable} ${notoDevanagari.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <ThemeScript />
+      </head>
       <body className="font-sans antialiased">
-        <AuthProvider>
-          <ClientShell>{children}</ClientShell>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ClientShell>{children}</ClientShell>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -86,7 +86,7 @@ export function OnboardingTutorial() {
     >
       <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" aria-hidden />
 
-      <div className="relative z-10 w-full max-w-md overflow-hidden rounded-[1.75rem] border border-gita-line/60 bg-white shadow-2xl shadow-slate-900/20">
+      <div className="relative z-10 w-full max-w-md overflow-hidden rounded-[1.75rem] border border-gita-line/60 bg-white shadow-2xl shadow-slate-900/20 dark:border-gita-line dark:bg-gita-ivory dark:shadow-black/40">
         <div className="h-1 bg-gita-line/40">
           <div
             className="h-full bg-gradient-to-r from-gita-saffron to-gita-peacock transition-all duration-300"

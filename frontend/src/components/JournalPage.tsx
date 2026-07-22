@@ -343,7 +343,7 @@ const FILTERS = ["All", "Deep Reflection", "Philosophy", "Meditation Notes", "Li
 
 function Tag({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-sm border border-slate-200 bg-white px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-slate-700 font-sans">
+    <span className="inline-flex items-center gap-1 rounded-sm border border-slate-200 dark:border-ink-700 bg-gita-chariot dark:bg-ink-800 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-slate-700 dark:text-ink-200 font-sans">
       <TagIcon type={label} />
       {label}
     </span>
@@ -368,10 +368,10 @@ function ArticleModal({ article, onClose }: { article: Article; onClose: () => v
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8" aria-modal="true" role="dialog">
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]" onClick={onClose} />
 
-      <div className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[1.5rem] border border-slate-200/80 bg-white shadow-2xl shadow-slate-300/30">
-        <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-[1.5rem] border-b border-slate-200/80 bg-white/95 px-6 py-3 backdrop-blur-md">
+      <div className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[1.5rem] border border-slate-200 dark:border-ink-700/80 bg-gita-chariot dark:bg-ink-800 shadow-2xl shadow-slate-300/30 dark:shadow-black/40">
+        <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-[1.5rem] border-b border-slate-200 dark:border-ink-700/80 bg-gita-chariot/95 dark:bg-ink-800/95 px-6 py-3 backdrop-blur-md">
           <div className="flex flex-wrap items-center gap-2 text-[10px]">
-            <span className="font-semibold uppercase tracking-wider text-slate-500">{article.date}</span>
+            <span className="font-semibold uppercase tracking-wider text-slate-500 dark:text-ink-400">{article.date}</span>
             <span className="text-slate-300">·</span>
             <span className="font-semibold uppercase tracking-wider text-teal-700">{article.category}</span>
             {article.chapter && (
@@ -384,7 +384,7 @@ function ArticleModal({ article, onClose }: { article: Article; onClose: () => v
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-sm border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-sm border border-slate-200 dark:border-ink-700 text-slate-600 dark:text-ink-300 hover:bg-slate-50 transition-colors"
             aria-label="Close article"
           >
             <CloseIcon />
@@ -392,10 +392,10 @@ function ArticleModal({ article, onClose }: { article: Article; onClose: () => v
         </div>
 
         <div className="px-6 pb-10 pt-5 font-serif">
-          <h2 className="font-serif text-[1.375rem] font-normal leading-snug text-slate-900 sm:text-[1.5rem]">
+          <h2 className="font-serif text-[1.375rem] font-normal leading-snug text-slate-900 dark:text-ink-50 sm:text-[1.5rem]">
             {article.title}
           </h2>
-          <p className="mt-2 font-mono text-[10px] tracking-wide uppercase text-slate-500">
+          <p className="mt-2 font-mono text-[10px] tracking-wide uppercase text-slate-500 dark:text-ink-400">
             {article.readTime}
           </p>
 
@@ -410,7 +410,7 @@ function ArticleModal({ article, onClose }: { article: Article; onClose: () => v
 
           <div className="space-y-5">
             {article.body.map((para, i) => (
-              <p key={i} className="text-[14px] leading-[1.8] text-slate-600">
+              <p key={i} className="text-[14px] leading-[1.8] text-slate-600 dark:text-ink-300">
                 {para}
               </p>
             ))}
@@ -443,24 +443,24 @@ function ArticleCard({ article, onOpen }: { article: Article; onOpen: (a: Articl
     <button
       type="button"
       onClick={() => onOpen(article)}
-      className="card group cursor-pointer rounded-sm border-slate-200/80 p-5 text-left transition-colors hover:border-teal-300/60 w-full"
+      className="card group cursor-pointer rounded-sm border-slate-200 dark:border-ink-700/80 p-5 text-left transition-colors hover:border-teal-300/60 w-full"
     >
       <div className="mb-3 flex flex-wrap items-center gap-2 font-sans">
-        <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">{article.date}</span>
+        <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-ink-400">{article.date}</span>
         <span className="text-slate-300">·</span>
         <span className="font-semibold uppercase tracking-wider text-indigo-700/90">{article.category}</span>
       </div>
-      <h3 className="font-serif text-[1.0625rem] font-medium leading-snug text-slate-900 group-hover:text-teal-900 transition-colors">
+      <h3 className="font-serif text-[1.0625rem] font-medium leading-snug text-slate-900 dark:text-ink-50 group-hover:text-teal-900 transition-colors">
         {article.title}
       </h3>
-      <p className="mt-2 font-sans text-[13px] leading-relaxed text-slate-600">{article.summary}</p>
+      <p className="mt-2 font-sans text-[13px] leading-relaxed text-slate-600 dark:text-ink-300">{article.summary}</p>
       <div className="mt-4 flex items-center justify-between">
         <div className="flex flex-wrap gap-1.5">
           {article.tags.slice(0, 2).map((t) => (
             <Tag key={t} label={t} />
           ))}
         </div>
-        <span className="font-mono text-[10px] text-slate-500">{article.readTime}</span>
+        <span className="font-mono text-[10px] text-slate-500 dark:text-ink-400">{article.readTime}</span>
       </div>
       <div className="mt-4 flex items-center gap-1 font-sans text-[11px] font-semibold text-teal-700 opacity-0 group-hover:opacity-100 transition-opacity">
         Continue reading <ArrowRight />
@@ -495,7 +495,7 @@ export function JournalPage() {
     : extraArticles.filter(a => a.category === activeFilter);
 
   return (
-    <div className="relative min-h-screen bg-white font-sans text-slate-800">
+    <div className="relative min-h-screen theme-page font-sans">
       <AppNav />
 
       <div className="pointer-events-none absolute left-[5%] top-36 h-56 w-56 rounded-full bg-teal-100/35 blur-3xl" aria-hidden />
@@ -508,10 +508,10 @@ export function JournalPage() {
         {/* ══ PAGE HEADER ══ */}
         <div className="mb-14">
           <span className="mb-3 inline-block text-[0.7rem] font-bold uppercase tracking-[0.14em] text-teal-700">Campfire essays</span>
-          <h1 className="font-display text-4xl font-semibold tracking-tight text-slate-900 sm:text-[2.75rem]">
+          <h1 className="font-display text-4xl font-semibold tracking-tight text-slate-900 dark:text-ink-50 sm:text-[2.75rem]">
             Journal &amp; reflections
           </h1>
-          <p className="mt-4 max-w-xl text-[15px] leading-[1.72] text-slate-600">
+          <p className="mt-4 max-w-xl text-[15px] leading-[1.72] text-slate-600 dark:text-ink-300">
             Pieces that borrow the Gītā&rsquo;s rhythm—dramatic stakes, humane doubt—indexed so you skim before hopping into conversational chat or your own sutra-reading.
           </p>
           <div className="mt-6 h-0.5 w-28 bg-gradient-to-r from-teal-500 via-indigo-500 to-violet-500 opacity-70" />
@@ -522,24 +522,24 @@ export function JournalPage() {
 
           {/* Featured hero card */}
           <button onClick={() => openArticle(featured)}
-            className="card group cursor-pointer rounded-[1.5rem] border-teal-200/70 bg-gradient-to-br from-white to-teal-50/50 p-7 text-left ring-1 ring-teal-100/80"
+            className="card group cursor-pointer rounded-[1.5rem] border-teal-200/70 bg-gradient-to-br from-gita-ivory to-teal-50/50 dark:from-ink-800 dark:to-teal-950/35 p-7 text-left ring-1 ring-teal-100/80 dark:ring-teal-900/40"
           >
             <div className="mb-4 flex items-center gap-2">
-              <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">{featured.date}</span>
+              <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-ink-400">{featured.date}</span>
               <span className="text-slate-300 text-[10px]">·</span>
               <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-teal-700">{featured.category}</span>
             </div>
-            <h2 className="font-serif text-[22px] font-normal leading-snug text-slate-900 group-hover:text-teal-900 transition-colors sm:text-2xl">
+            <h2 className="font-serif text-[22px] font-normal leading-snug text-slate-900 dark:text-ink-50 group-hover:text-teal-900 transition-colors sm:text-2xl">
               {featured.title}
             </h2>
             {featured.verse && (
-              <div className="my-5 rounded-r-xl border-l-[3px] border-teal-400 bg-teal-50/50 px-4 py-3">
-                <p className="font-serif text-[13px] italic text-slate-600">
+              <div className="my-5 rounded-r-xl border-l-[3px] border-teal-400 bg-teal-50/50 dark:bg-teal-950/40 px-4 py-3">
+                <p className="font-serif text-[13px] italic text-slate-600 dark:text-ink-300">
                   &ldquo;{featured.verse.text}&rdquo; — {featured.verse.ref}
                 </p>
               </div>
             )}
-            <p className="font-sans text-[13px] leading-7 text-slate-600">
+            <p className="font-sans text-[13px] leading-7 text-slate-600 dark:text-ink-300">
               {featured.body[0]}<span className="text-slate-400"> …</span>
             </p>
             <div className="mt-5 flex items-center justify-between">
@@ -556,13 +556,13 @@ export function JournalPage() {
           <div className="flex flex-col gap-5">
             {secondary.map((a) => (
               <button key={a.id} onClick={() => openArticle(a)}
-                className="card group cursor-pointer rounded-sm border-violet-100/80 bg-gradient-to-br from-white to-violet-50/40 p-5 text-left"
+                className="card group cursor-pointer rounded-sm border-violet-100/80 dark:border-violet-900/40 bg-gradient-to-br from-gita-ivory to-violet-50/40 dark:from-ink-800 dark:to-violet-950/35 p-5 text-left"
               >
-                <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">{a.date}</span>
-                <h3 className="mt-2 font-serif text-[16px] font-normal leading-snug text-slate-900 group-hover:text-violet-900 transition-colors">
+                <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-ink-400">{a.date}</span>
+                <h3 className="mt-2 font-serif text-[16px] font-normal leading-snug text-slate-900 dark:text-ink-50 group-hover:text-violet-900 transition-colors">
                   {a.title}
                 </h3>
-                <p className="mt-1.5 font-sans text-[12px] leading-5 text-slate-600">{a.summary}</p>
+                <p className="mt-1.5 font-sans text-[12px] leading-5 text-slate-600 dark:text-ink-300">{a.summary}</p>
                 {a.verse && (
                   <p className="mt-3 flex items-center gap-1.5 font-mono text-[10px] font-medium text-violet-700">
                     <span className="inline-block h-px w-5 bg-violet-200" />
@@ -585,12 +585,12 @@ export function JournalPage() {
           mobileMaxWidth={640}
         >
           <button type="button" onClick={() => openArticle(gridLeft)}
-            className="card group cursor-pointer rounded-sm border-sky-100/80 bg-gradient-to-br from-white to-sky-50/40 p-5 text-left"
+            className="card group cursor-pointer rounded-sm border-sky-100/80 dark:border-sky-900/40 bg-gradient-to-br from-gita-ivory to-sky-50/40 dark:from-ink-800 dark:to-sky-950/35 p-5 text-left"
           >
-            <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">{gridLeft.date}</span>
-            <h3 className="mt-2 font-serif text-[16px] font-normal leading-snug text-slate-900 group-hover:text-sky-900 transition-colors">{gridLeft.title}</h3>
-            <p className="mt-1.5 font-sans text-[12px] leading-6 text-slate-600">{gridLeft.summary}</p>
-            <div className="mt-3 flex items-center gap-1 font-sans text-[11px] text-slate-500">
+            <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-ink-400">{gridLeft.date}</span>
+            <h3 className="mt-2 font-serif text-[16px] font-normal leading-snug text-slate-900 dark:text-ink-50 group-hover:text-sky-900 transition-colors">{gridLeft.title}</h3>
+            <p className="mt-1.5 font-sans text-[12px] leading-6 text-slate-600 dark:text-ink-300">{gridLeft.summary}</p>
+            <div className="mt-3 flex items-center gap-1 font-sans text-[11px] text-slate-500 dark:text-ink-400">
               <TagIcon type={gridLeft.category} /><span>{gridLeft.category}</span>
             </div>
             <p className="mt-3 flex items-center gap-1 font-sans text-[11px] font-semibold text-sky-700 opacity-0 group-hover:opacity-100 transition-opacity">Open article <ArrowRight /></p>
@@ -611,12 +611,12 @@ export function JournalPage() {
           </div>
 
           <button type="button" onClick={() => openArticle(gridRight)}
-            className="card group cursor-pointer rounded-sm border-rose-100/80 bg-gradient-to-br from-white to-rose-50/40 p-5 text-left"
+            className="card group cursor-pointer rounded-sm border-rose-100/80 dark:border-rose-900/40 bg-gradient-to-br from-gita-ivory to-rose-50/40 dark:from-ink-800 dark:to-rose-950/35 p-5 text-left"
           >
-            <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">{gridRight.date}</span>
-            <h3 className="mt-2 font-serif text-[16px] font-normal leading-snug text-slate-900 group-hover:text-rose-900 transition-colors">{gridRight.title}</h3>
-            <p className="mt-1.5 font-sans text-[12px] leading-6 text-slate-600">{gridRight.summary}</p>
-            <div className="mt-3 flex items-center gap-1 font-sans text-[11px] text-slate-500">
+            <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-ink-400">{gridRight.date}</span>
+            <h3 className="mt-2 font-serif text-[16px] font-normal leading-snug text-slate-900 dark:text-ink-50 group-hover:text-rose-900 transition-colors">{gridRight.title}</h3>
+            <p className="mt-1.5 font-sans text-[12px] leading-6 text-slate-600 dark:text-ink-300">{gridRight.summary}</p>
+            <div className="mt-3 flex items-center gap-1 font-sans text-[11px] text-slate-500 dark:text-ink-400">
               <TagIcon type={gridRight.category} /><span>{gridRight.category}</span>
             </div>
             <p className="mt-3 flex items-center gap-1 font-sans text-[11px] font-semibold text-rose-700 opacity-0 group-hover:opacity-100 transition-opacity">Open article <ArrowRight /></p>
@@ -626,40 +626,40 @@ export function JournalPage() {
         {/* ══ WEEKLY SUMMARY ROW ══ */}
         <div className="mt-5 grid gap-5 sm:grid-cols-[1fr_300px]">
           <button type="button" onClick={() => openArticle(selflessAction)}
-            className="card group cursor-pointer rounded-sm border-emerald-100/80 bg-gradient-to-br from-white to-emerald-50/40 p-7 text-left"
+            className="card group cursor-pointer rounded-sm border-emerald-100/80 dark:border-emerald-900/40 bg-gradient-to-br from-gita-ivory to-emerald-50/40 dark:from-ink-800 dark:to-emerald-950/35 p-7 text-left"
           >
             <div className="mb-3 flex items-center gap-2">
-              <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">{selflessAction.date}</span>
+              <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-ink-400">{selflessAction.date}</span>
               <span className="text-slate-300 text-[10px]">·</span>
               <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-emerald-700">{selflessAction.category}</span>
             </div>
-            <h3 className="font-serif text-[18px] font-normal leading-snug text-slate-900 group-hover:text-emerald-900 transition-colors">{selflessAction.title}</h3>
+            <h3 className="font-serif text-[18px] font-normal leading-snug text-slate-900 dark:text-ink-50 group-hover:text-emerald-900 transition-colors">{selflessAction.title}</h3>
             {selflessAction.verse && (
-              <div className="my-4 rounded-r-xl border-l-[3px] border-emerald-400 bg-emerald-50/50 px-4 py-3">
-                <p className="font-serif text-[13px] italic text-slate-600">
+              <div className="my-4 rounded-r-xl border-l-[3px] border-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/40 px-4 py-3">
+                <p className="font-serif text-[13px] italic text-slate-600 dark:text-ink-300">
                   &ldquo;{selflessAction.verse.text}&rdquo; — {selflessAction.verse.ref}
                 </p>
               </div>
             )}
-            <p className="font-sans text-[13px] leading-7 text-slate-600">{selflessAction.body[0]}</p>
+            <p className="font-sans text-[13px] leading-7 text-slate-600 dark:text-ink-300">{selflessAction.body[0]}</p>
             <span className="mt-4 flex items-center gap-1.5 font-sans text-[12px] font-semibold text-emerald-700 transition-colors">
               Continue reading <ArrowRight />
             </span>
           </button>
 
           <button type="button" onClick={() => openArticle(pathOfDevotion)}
-            className="group flex cursor-pointer flex-col justify-between rounded-sm border border-dashed border-amber-200/80 bg-gradient-to-br from-white to-amber-50/40 p-6 text-left transition-colors hover:border-amber-300/80"
+            className="group flex cursor-pointer flex-col justify-between rounded-sm border border-dashed border-amber-200/80 dark:border-amber-800/50 bg-gradient-to-br from-gita-ivory to-amber-50/40 dark:from-ink-800 dark:to-amber-950/35 p-6 text-left transition-colors hover:border-amber-300/80 dark:hover:border-amber-700/60"
           >
             <div>
               <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-wider text-amber-700">{pathOfDevotion.category}</p>
-              <h3 className="font-serif text-[18px] font-normal leading-snug text-slate-900 group-hover:text-amber-900 transition-colors">
+              <h3 className="font-serif text-[18px] font-normal leading-snug text-slate-900 dark:text-ink-50 group-hover:text-amber-900 dark:group-hover:text-amber-300 transition-colors">
                 {pathOfDevotion.title}
               </h3>
-              <p className="mt-3 font-sans text-[12px] leading-6 text-slate-600">{pathOfDevotion.summary}</p>
+              <p className="mt-3 font-sans text-[12px] leading-6 text-slate-600 dark:text-ink-300">{pathOfDevotion.summary}</p>
             </div>
             <div className="mt-5 flex items-center justify-between">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-slate-500">Related threads</span>
-              <span className="flex h-7 w-7 items-center justify-center rounded-sm border border-amber-200 bg-white text-amber-700">
+              <span className="font-mono text-[10px] uppercase tracking-wider text-slate-500 dark:text-ink-400">Related threads</span>
+              <span className="flex h-7 w-7 items-center justify-center rounded-sm border border-amber-200 dark:border-amber-800/60 bg-gita-chariot dark:bg-ink-700 text-amber-700 dark:text-amber-400">
                 <SparkleIcon />
               </span>
             </div>
@@ -684,12 +684,12 @@ export function JournalPage() {
               { topic: "Sankhya Philosophy", desc: "The Gita's metaphysics — purusha, prakriti, and the three gunas.", verse: "Ch. 2 & 14", accent: "emerald" },
             ].map((t) => {
               const styles: Record<string, { card: string; label: string; hover: string; link: string }> = {
-                teal:    { card: "border-teal-100/80 bg-gradient-to-br from-white to-teal-50/40", label: "text-teal-700", hover: "group-hover:text-teal-900", link: "text-teal-700" },
-                indigo:  { card: "border-indigo-100/80 bg-gradient-to-br from-white to-indigo-50/40", label: "text-indigo-700", hover: "group-hover:text-indigo-900", link: "text-indigo-700" },
-                violet:  { card: "border-violet-100/80 bg-gradient-to-br from-white to-violet-50/40", label: "text-violet-700", hover: "group-hover:text-violet-900", link: "text-violet-700" },
-                sky:     { card: "border-sky-100/80 bg-gradient-to-br from-white to-sky-50/40", label: "text-sky-700", hover: "group-hover:text-sky-900", link: "text-sky-700" },
-                rose:    { card: "border-rose-100/80 bg-gradient-to-br from-white to-rose-50/40", label: "text-rose-700", hover: "group-hover:text-rose-900", link: "text-rose-700" },
-                emerald: { card: "border-emerald-100/80 bg-gradient-to-br from-white to-emerald-50/40", label: "text-emerald-700", hover: "group-hover:text-emerald-900", link: "text-emerald-700" },
+                teal:    { card: "border-teal-100/80 dark:border-teal-900/40 bg-gradient-to-br from-gita-ivory to-teal-50/40 dark:from-ink-800 dark:to-teal-950/35", label: "text-teal-700 dark:text-teal-400", hover: "group-hover:text-teal-900 dark:group-hover:text-teal-300", link: "text-teal-700 dark:text-teal-400" },
+                indigo:  { card: "border-indigo-100/80 dark:border-indigo-900/40 bg-gradient-to-br from-gita-ivory to-indigo-50/40 dark:from-ink-800 dark:to-indigo-950/35", label: "text-indigo-700 dark:text-indigo-400", hover: "group-hover:text-indigo-900 dark:group-hover:text-indigo-300", link: "text-indigo-700 dark:text-indigo-400" },
+                violet:  { card: "border-violet-100/80 dark:border-violet-900/40 bg-gradient-to-br from-gita-ivory to-violet-50/40 dark:from-ink-800 dark:to-violet-950/35", label: "text-violet-700 dark:text-violet-400", hover: "group-hover:text-violet-900 dark:group-hover:text-violet-300", link: "text-violet-700 dark:text-violet-400" },
+                sky:     { card: "border-sky-100/80 dark:border-sky-900/40 bg-gradient-to-br from-gita-ivory to-sky-50/40 dark:from-ink-800 dark:to-sky-950/35", label: "text-sky-700 dark:text-sky-400", hover: "group-hover:text-sky-900 dark:group-hover:text-sky-300", link: "text-sky-700 dark:text-sky-400" },
+                rose:    { card: "border-rose-100/80 dark:border-rose-900/40 bg-gradient-to-br from-gita-ivory to-rose-50/40 dark:from-ink-800 dark:to-rose-950/35", label: "text-rose-700 dark:text-rose-400", hover: "group-hover:text-rose-900 dark:group-hover:text-rose-300", link: "text-rose-700 dark:text-rose-400" },
+                emerald: { card: "border-emerald-100/80 dark:border-emerald-900/40 bg-gradient-to-br from-gita-ivory to-emerald-50/40 dark:from-ink-800 dark:to-emerald-950/35", label: "text-emerald-700 dark:text-emerald-400", hover: "group-hover:text-emerald-900 dark:group-hover:text-emerald-300", link: "text-emerald-700 dark:text-emerald-400" },
               };
               const s = styles[t.accent];
               return (
@@ -697,8 +697,8 @@ export function JournalPage() {
                 className={`card group rounded-sm p-5 transition-all ${s.card}`}
               >
                 <p className={`mb-1 text-[0.65rem] font-semibold uppercase tracking-wider ${s.label}`}>{t.verse}</p>
-                <h3 className={`font-serif text-[15px] font-normal text-slate-900 transition-colors ${s.hover}`}>{t.topic}</h3>
-                <p className="mt-1.5 font-sans text-[12px] leading-5 text-slate-600">{t.desc}</p>
+                <h3 className={`font-serif text-[15px] font-normal text-slate-900 dark:text-ink-50 transition-colors ${s.hover}`}>{t.topic}</h3>
+                <p className="mt-1.5 font-sans text-[12px] leading-5 text-slate-600 dark:text-ink-300">{t.desc}</p>
                 <p className={`mt-3 flex items-center gap-1 font-sans text-[11px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity ${s.link}`}>
                   Open in chat <ArrowRight />
                 </p>
@@ -719,7 +719,7 @@ export function JournalPage() {
                 className={`rounded-sm border px-4 py-1.5 font-sans text-[12px] font-semibold transition-all ${
                   activeFilter === f && showMore
                     ? "border-teal-700 bg-teal-700 text-white shadow-sm"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-indigo-300 hover:text-indigo-700"
+                    : "border-slate-200 dark:border-ink-700 bg-gita-chariot dark:bg-ink-800 text-slate-600 dark:text-ink-300 hover:border-indigo-300 dark:hover:border-indigo-700 hover:text-indigo-700 dark:hover:text-indigo-400"
                 }`}
               >
                 {f}
@@ -752,11 +752,11 @@ export function JournalPage() {
       </div>
 
       {/* ══ FOOTER ══ */}
-      <footer className="border-t border-slate-200 bg-white px-6 py-6 sm:px-10">
+      <footer className="border-t border-slate-200 dark:border-ink-700 bg-gita-chariot dark:bg-ink-900 px-6 py-6 sm:px-10">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 sm:flex-row">
-          <p className="font-serif text-[13px] font-semibold text-slate-800">Bhagavad Gītā AI</p>
-          <p className="text-center font-sans text-[11px] text-slate-500">© Bhagavad Gītā AI — verify passages against primary sources.</p>
-          <div className="flex items-center gap-4 font-sans text-[12px] text-slate-600">
+          <p className="font-serif text-[13px] font-semibold text-slate-800 dark:text-ink-100">Bhagavad Gītā AI</p>
+          <p className="text-center font-sans text-[11px] text-slate-500 dark:text-ink-400">© Bhagavad Gītā AI — verify passages against primary sources.</p>
+          <div className="flex items-center gap-4 font-sans text-[12px] text-slate-600 dark:text-ink-300">
             <a href="#" className="transition-colors hover:text-indigo-700">Privacy</a>
             <a href="#" className="transition-colors hover:text-indigo-700">Terms</a>
             <Link href="/chat" className="font-medium text-teal-700 hover:underline">
