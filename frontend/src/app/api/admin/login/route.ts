@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { ADMIN_SESSION_COOKIE_NAME, signAdminCookie } from "@/lib/admin-session";
 
@@ -26,10 +25,10 @@ export async function POST(req: Request) {
   }
 
   const token = signAdminCookie();
-  const res = NextResponse.json({ ok: true });
   const isProd = process.env.NODE_ENV === "production";
+  const res = NextResponse.json({ ok: true });
 
-  cookies().set(ADMIN_SESSION_COOKIE_NAME, token, {
+  res.cookies.set(ADMIN_SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: isProd,
     sameSite: "lax",

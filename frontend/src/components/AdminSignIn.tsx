@@ -48,7 +48,8 @@ export default function AdminSignIn() {
         return;
       }
       setSecretInput("");
-      router.replace("/admin");
+      // Full navigation ensures the new httpOnly cookie is sent to the server page check
+      window.location.assign("/admin");
     } catch {
       setLoginError("Network error signing in.");
     } finally {
@@ -65,12 +66,19 @@ export default function AdminSignIn() {
 
         {session === null ? (
           <p className="text-sm text-gita-muted">Loading…</p>
-        ) : !session.adminSecretConfigured || !session.serviceAccountConfigured ? (
+        ) : !session.adminSecretConfigured ? (
           <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-            Configure server env vars: <strong>ADMIN_PANEL_SECRET</strong> and{" "}
-            <strong>FIREBASE_SERVICE_ACCOUNT_JSON</strong>. Restart the dev server after updating.
+            Set <strong>ADMIN_PANEL_SECRET</strong> in <code className="text-xs">frontend/.env.local</code>{" "}
+            (or <code className="text-xs">frontend/.env</code>), then restart the dev server.
           </div>
         ) : (
+          <>
+            {!session.serviceAccountConfigured ? (
+              <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+                <strong>FIREBASE_SERVICE_ACCOUNT_JSON</strong> is not configured — you can sign in, but the user
+                table will not load until it is set.
+              </div>
+            ) : null}
           <form
             onSubmit={(e) => void handleLogin(e)}
             className="glass-panel space-y-4 rounded-2xl p-8"
@@ -102,6 +110,7 @@ export default function AdminSignIn() {
               {loggingIn ? "Checking…" : "Unlock dashboard"}
             </button>
           </form>
+          </>
         )}
       </div>
     </div>
